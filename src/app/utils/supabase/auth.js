@@ -1,5 +1,5 @@
 //NOTE: Need to implement error handling
-import { createClient } from "server.js";
+import { createClient } from "./server.js";
 
 export async function signUp(email, password) {
   const supabase = await createClient();
