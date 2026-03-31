@@ -1,16 +1,31 @@
 import { createClient } from "./server.js";
 
+//Get authenticated uuid
+
+async function getUserID(supabase) {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error) {
+    console.error("Error fetching user:", error.message);
+    return null;
+  }
+  return user.id;
+}
+
 // ==================== POST OPERATIONS ====================
 
 /**
  * Create a new post
  * @param {string} title - Post title
  * @param {string} content - Post content
- * @param {string} user_id - User ID of the post creator
  * @returns {Object} { data, error }
  */
-export async function createPost(title, content, user_id) {
+export async function createPost(title, content) {
   const supabase = await createClient();
+  const user_id = await getUserID(supabase);
   const { data, error } = await supabase
     .from("posts")
     .insert([{ title, content, user_id }])
@@ -66,11 +81,11 @@ export async function getPostById(post_id) {
 
 /**
  * Get posts by a specific user
- * @param {string} user_id - User ID
  * @returns {Object} { data, error }
  */
-export async function getPostsByUser(user_id) {
+export async function getPostsByUser() {
   const supabase = await createClient();
+  const user_id = await getUserID(supabase);
   const { data, error } = await supabase
     .from("posts")
     .select(
@@ -124,11 +139,11 @@ export async function deletePost(post_id) {
  * Create a new comment on a post
  * @param {string} post_id - Post ID
  * @param {string} content - Comment content
- * @param {string} user_id - User ID of the commenter
  * @returns {Object} { data, error }
  */
-export async function createComment(post_id, content, user_id) {
+export async function createComment(post_id, content) {
   const supabase = await createClient();
+  const user_id = await getUserID(supabase);
   const { data, error } = await supabase
     .from("comments")
     .insert([{ post_id, content, user_id }])
@@ -183,11 +198,11 @@ export async function getCommentById(comment_id) {
 
 /**
  * Get all comments by a specific user
- * @param {string} user_id - User ID
  * @returns {Object} { data, error }
  */
-export async function getCommentsByUser(user_id) {
+export async function getCommentsByUser() {
   const supabase = await createClient();
+  const user_id = await getUserID(supabase);
   const { data, error } = await supabase
     .from("comments")
     .select(
