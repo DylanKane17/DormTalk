@@ -216,20 +216,22 @@ export async function deleteComment(comment_id) {
 
 // ==================== COMBINED OPERATIONS ====================
 
-export async function getPostWithComments(offset = 0, limit = 20) {
+export async function getPostWithComments(post_id) {
   const supabase = await createClient();
-
   const { data, error } = await supabase
     .from("posts")
     .select(
       `
       *,
-      author:profiles!posts_user_id_fkey(username, school),
-      comments(count)
+      author:profiles!posts_user_id_fkey (username, school),
+      comments (
+        *,
+        author:profiles!comments_user_id_fkey (username, school)
+      )
     `,
     )
-    .order("created_at", { ascending: false })
-    .range(offset, offset + limit - 1);
+    .eq("id", post_id)
+    .single();
 
   return { data, error };
 }

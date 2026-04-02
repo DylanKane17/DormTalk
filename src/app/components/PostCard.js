@@ -21,7 +21,7 @@ export default function PostCard({
             </h3>
           </Link>
           <p className="text-sm text-gray-400 mt-1">
-            By {post.user?.email || "Unknown"} •{" "}
+            By @{post.author?.username || "Unknown"} •{" "}
             {new Date(post.created_at).toLocaleDateString()}
           </p>
         </div>
@@ -32,9 +32,11 @@ export default function PostCard({
       {showComments && post.comments && (
         <p className="text-sm text-cyan-400 mb-3">
           💬{" "}
-          {Array.isArray(post.comments)
-            ? post.comments.length
-            : post.comments[0]?.count || 0}{" "}
+          {Array.isArray(post.comments) && post.comments[0]?.count !== undefined
+            ? post.comments[0].count
+            : Array.isArray(post.comments)
+              ? post.comments.length
+              : 0}{" "}
           comments
         </p>
       )}
