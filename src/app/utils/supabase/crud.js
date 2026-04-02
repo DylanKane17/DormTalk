@@ -38,7 +38,7 @@ export async function getPosts(limit = 50, offset = 0) {
     .select(
       `
       *,
-      author:profiles!user_id (username, school),
+      author:profiles!posts_user_id_fkey (username, school),
       comments (count)
     `,
     )
@@ -55,7 +55,7 @@ export async function getPostById(post_id) {
     .select(
       `
       *,
-      author:profiles!user_id (username, school)
+      author:profiles!posts_user_id_fkey (username, school)
     `,
     )
     .eq("id", post_id)
@@ -80,7 +80,7 @@ export async function getPostsByUser() {
     .select(
       `
       *,
-      author:profiles!user_id (username, school),
+      author:profiles!posts_user_id_fkey (username, school),
       comments (count)
     `,
     )
@@ -141,7 +141,7 @@ export async function getCommentsByPost(post_id) {
     .select(
       `
       *,
-      author:profiles!user_id (username, school)
+      author:profiles!posts_user_id_fkey (username, school)
     `,
     )
     .eq("post_id", post_id)
@@ -157,7 +157,7 @@ export async function getCommentById(comment_id) {
     .select(
       `
       *,
-      author:profiles!user_id (username, school),
+      author:profiles!posts_user_id_fkey (username, school),
       post:post_id (id, title)
     `,
     )
@@ -216,22 +216,20 @@ export async function deleteComment(comment_id) {
 
 // ==================== COMBINED OPERATIONS ====================
 
-export async function getPostWithComments(post_id) {
+export async function getPostWithComments(offset = 0, limit = 20) {
   const supabase = await createClient();
+
   const { data, error } = await supabase
     .from("posts")
     .select(
       `
       *,
-      author:profiles!user_id (username, school),
-      comments (
-        *,
-        author:profiles!user_id (username, school)
-      )
+      author:profiles!posts_user_id_fkey(username, school),
+      comments(count)
     `,
     )
-    .eq("id", post_id)
-    .single();
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
 
   return { data, error };
 }
@@ -243,10 +241,10 @@ export async function getPostsWithComments(limit = 20, offset = 0) {
     .select(
       `
       *,
-      author:profiles!user_id (username, school),
+      author:profiles!posts_user_id_fkey (username, school),
       comments (
         *,
-        author:profiles!user_id (username, school)
+        author:profiles!posts_user_id_fkey (username, school)
       )
     `,
     )
