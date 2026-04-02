@@ -12,6 +12,12 @@ async function getUserID(supabase) {
     console.error("Error fetching user:", error.message);
     return null;
   }
+
+  if (!user) {
+    console.error("No authenticated user found");
+    return null;
+  }
+
   return user.id;
 }
 
@@ -26,6 +32,12 @@ async function getUserID(supabase) {
 export async function createPost(title, content) {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to create a post." },
+    };
+  }
   const { data, error } = await supabase
     .from("posts")
     .insert([{ title, content, user_id }])
@@ -48,7 +60,7 @@ export async function getPosts(limit = 50, offset = 0) {
     .select(
       `
       *,
-      user:user_id (id, email),
+      user:profiles!user_id (id, email),
       comments (count)
     `,
     )
@@ -70,7 +82,7 @@ export async function getPostById(post_id) {
     .select(
       `
       *,
-      user:user_id (id, email)
+      user:profiles!user_id (id, email)
     `,
     )
     .eq("id", post_id)
@@ -86,6 +98,9 @@ export async function getPostById(post_id) {
 export async function getPostsByUser() {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
+  if (!user_id) {
+    return { data: [], error: "You must be logged in to see your posts." };
+  }
   const { data, error } = await supabase
     .from("posts")
     .select(
@@ -144,6 +159,12 @@ export async function deletePost(post_id) {
 export async function createComment(post_id, content) {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to create a comment." },
+    };
+  }
   const { data, error } = await supabase
     .from("comments")
     .insert([{ post_id, content, user_id }])
@@ -165,7 +186,7 @@ export async function getCommentsByPost(post_id) {
     .select(
       `
       *,
-      user:user_id (id, email)
+      user:profiles!user_id (id, email)
     `,
     )
     .eq("post_id", post_id)
@@ -186,7 +207,7 @@ export async function getCommentById(comment_id) {
     .select(
       `
       *,
-      user:user_id (id, email),
+      user:profiles!user_id (id, email),
       post:post_id (id, title)
     `,
     )
@@ -203,6 +224,9 @@ export async function getCommentById(comment_id) {
 export async function getCommentsByUser() {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
+  if (!user_id) {
+    return { data: [], error: "You must be logged in to see your comments." };
+  }
   const { data, error } = await supabase
     .from("comments")
     .select(
@@ -264,7 +288,7 @@ export async function getPostWithComments(post_id) {
     .select(
       `
       *,
-      user:user_id (id, email),
+      user:profiles!user_id (id, email),
       comments (
         *,
         user:user_id (id, email)
@@ -290,7 +314,7 @@ export async function getPostsWithComments(limit = 20, offset = 0) {
     .select(
       `
       *,
-      user:user_id (id, email),
+      user:profiles!user_id (id, email),
       comments (
         *,
         user:user_id (id, email)
