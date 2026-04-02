@@ -1,43 +1,27 @@
-import { createClient } from "./server.js";
+import { createClient } from "./server.js"; // Note: Ensure this path points to your actual Supabase client file
 
-//Get authenticated uuid
-
+// ==================== AUTH HELPER ====================
 async function getUserID(supabase) {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error) {
-    console.error("Error fetching user:", error.message);
-    return null;
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    return null; // Safely return null if logged out, preventing the 'id of null' crash
   }
-
-  if (!user) {
-    console.error("No authenticated user found");
-    return null;
-  }
-
-  return user.id;
+  return data.user.id;
 }
 
 // ==================== POST OPERATIONS ====================
 
-/**
- * Create a new post
- * @param {string} title - Post title
- * @param {string} content - Post content
- * @returns {Object} { data, error }
- */
 export async function createPost(title, content) {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
+
   if (!user_id) {
     return {
       data: null,
       error: { message: "You must be logged in to create a post." },
     };
   }
+
   const { data, error } = await supabase
     .from("posts")
     .insert([{ title, content, user_id }])
@@ -47,12 +31,6 @@ export async function createPost(title, content) {
   return { data, error };
 }
 
-/**
- * Get all posts with optional pagination
- * @param {number} limit - Number of posts to fetch (default: 50)
- * @param {number} offset - Offset for pagination (default: 0)
- * @returns {Object} { data, error }
- */
 export async function getPosts(limit = 50, offset = 0) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -60,7 +38,7 @@ export async function getPosts(limit = 50, offset = 0) {
     .select(
       `
       *,
-      user:profiles!user_id (id, email),
+      author:profiles!user_id (username, school),
       comments (count)
     `,
     )
@@ -70,11 +48,6 @@ export async function getPosts(limit = 50, offset = 0) {
   return { data, error };
 }
 
-/**
- * Get a single post by ID
- * @param {string} post_id - Post ID
- * @returns {Object} { data, error }
- */
 export async function getPostById(post_id) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -82,7 +55,7 @@ export async function getPostById(post_id) {
     .select(
       `
       *,
-      user:profiles!user_id (id, email)
+      author:profiles!user_id (username, school)
     `,
     )
     .eq("id", post_id)
@@ -91,21 +64,23 @@ export async function getPostById(post_id) {
   return { data, error };
 }
 
-/**
- * Get posts by a specific user
- * @returns {Object} { data, error }
- */
 export async function getPostsByUser() {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
+
   if (!user_id) {
-    return { data: [], error: "You must be logged in to see your posts." };
+    return {
+      data: [],
+      error: { message: "You must be logged in to see your posts." },
+    };
   }
+
   const { data, error } = await supabase
     .from("posts")
     .select(
       `
       *,
+      author:profiles!user_id (username, school),
       comments (count)
     `,
     )
@@ -115,12 +90,6 @@ export async function getPostsByUser() {
   return { data, error };
 }
 
-/**
- * Update a post
- * @param {string} post_id - Post ID
- * @param {Object} updates - Object containing fields to update (title, content)
- * @returns {Object} { data, error }
- */
 export async function updatePost(post_id, updates) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -133,11 +102,6 @@ export async function updatePost(post_id, updates) {
   return { data, error };
 }
 
-/**
- * Delete a post
- * @param {string} post_id - Post ID
- * @returns {Object} { data, error }
- */
 export async function deletePost(post_id) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -150,21 +114,17 @@ export async function deletePost(post_id) {
 
 // ==================== COMMENT OPERATIONS ====================
 
-/**
- * Create a new comment on a post
- * @param {string} post_id - Post ID
- * @param {string} content - Comment content
- * @returns {Object} { data, error }
- */
 export async function createComment(post_id, content) {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
+
   if (!user_id) {
     return {
       data: null,
       error: { message: "You must be logged in to create a comment." },
     };
   }
+
   const { data, error } = await supabase
     .from("comments")
     .insert([{ post_id, content, user_id }])
@@ -174,11 +134,6 @@ export async function createComment(post_id, content) {
   return { data, error };
 }
 
-/**
- * Get all comments for a specific post
- * @param {string} post_id - Post ID
- * @returns {Object} { data, error }
- */
 export async function getCommentsByPost(post_id) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -186,7 +141,7 @@ export async function getCommentsByPost(post_id) {
     .select(
       `
       *,
-      user:profiles!user_id (id, email)
+      author:profiles!user_id (username, school)
     `,
     )
     .eq("post_id", post_id)
@@ -195,11 +150,6 @@ export async function getCommentsByPost(post_id) {
   return { data, error };
 }
 
-/**
- * Get a single comment by ID
- * @param {string} comment_id - Comment ID
- * @returns {Object} { data, error }
- */
 export async function getCommentById(comment_id) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -207,7 +157,7 @@ export async function getCommentById(comment_id) {
     .select(
       `
       *,
-      user:profiles!user_id (id, email),
+      author:profiles!user_id (username, school),
       post:post_id (id, title)
     `,
     )
@@ -217,16 +167,17 @@ export async function getCommentById(comment_id) {
   return { data, error };
 }
 
-/**
- * Get all comments by a specific user
- * @returns {Object} { data, error }
- */
 export async function getCommentsByUser() {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
+
   if (!user_id) {
-    return { data: [], error: "You must be logged in to see your comments." };
+    return {
+      data: [],
+      error: { message: "You must be logged in to see your comments." },
+    };
   }
+
   const { data, error } = await supabase
     .from("comments")
     .select(
@@ -241,12 +192,6 @@ export async function getCommentsByUser() {
   return { data, error };
 }
 
-/**
- * Update a comment
- * @param {string} comment_id - Comment ID
- * @param {string} content - Updated comment content
- * @returns {Object} { data, error }
- */
 export async function updateComment(comment_id, content) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -259,11 +204,6 @@ export async function updateComment(comment_id, content) {
   return { data, error };
 }
 
-/**
- * Delete a comment
- * @param {string} comment_id - Comment ID
- * @returns {Object} { data, error }
- */
 export async function deleteComment(comment_id) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -276,11 +216,6 @@ export async function deleteComment(comment_id) {
 
 // ==================== COMBINED OPERATIONS ====================
 
-/**
- * Get a post with all its comments
- * @param {string} post_id - Post ID
- * @returns {Object} { data, error }
- */
 export async function getPostWithComments(post_id) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -288,10 +223,10 @@ export async function getPostWithComments(post_id) {
     .select(
       `
       *,
-      user:profiles!user_id (id, email),
+      author:profiles!user_id (username, school),
       comments (
         *,
-        user:user_id (id, email)
+        author:profiles!user_id (username, school)
       )
     `,
     )
@@ -301,12 +236,6 @@ export async function getPostWithComments(post_id) {
   return { data, error };
 }
 
-/**
- * Get all posts with their comments (with pagination)
- * @param {number} limit - Number of posts to fetch (default: 20)
- * @param {number} offset - Offset for pagination (default: 0)
- * @returns {Object} { data, error }
- */
 export async function getPostsWithComments(limit = 20, offset = 0) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -314,10 +243,10 @@ export async function getPostsWithComments(limit = 20, offset = 0) {
     .select(
       `
       *,
-      user:profiles!user_id (id, email),
+      author:profiles!user_id (username, school),
       comments (
         *,
-        user:user_id (id, email)
+        author:profiles!user_id (username, school)
       )
     `,
     )
@@ -327,25 +256,11 @@ export async function getPostsWithComments(limit = 20, offset = 0) {
   return { data, error };
 }
 
-/**
- * Delete a post and all its comments (cascade delete)
- * @param {string} post_id - Post ID
- * @returns {Object} { data, error }
- */
 export async function deletePostWithComments(post_id) {
+  // Now that you ran the SQL cascade delete constraint,
+  // you no longer need to manually delete comments first.
+  // Supabase handles the cascade automatically!
   const supabase = await createClient();
-
-  // First delete all comments
-  const { error: commentsError } = await supabase
-    .from("comments")
-    .delete()
-    .eq("post_id", post_id);
-
-  if (commentsError) {
-    return { data: null, error: commentsError };
-  }
-
-  // Then delete the post
   const { data, error } = await supabase
     .from("posts")
     .delete()
@@ -354,11 +269,6 @@ export async function deletePostWithComments(post_id) {
   return { data, error };
 }
 
-/**
- * Get comment count for a post
- * @param {string} post_id - Post ID
- * @returns {Object} { count, error }
- */
 export async function getCommentCount(post_id) {
   const supabase = await createClient();
   const { count, error } = await supabase

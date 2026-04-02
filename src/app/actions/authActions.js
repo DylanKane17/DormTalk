@@ -1,62 +1,67 @@
 "use server";
 
-import { signUp, signIn, resetPass, updatePass } from "../utils/supabase/auth";
-import { redirect } from "next/navigation";
+// Server actions must use the server client, not the browser client
+import { createClient } from "../utils/supabase/server";
 
+// 1. Create the Auth User
 export async function signUpAction(formData) {
   const email = formData.get("email");
   const password = formData.get("password");
+  const username = formData.get("username");
+  const school = formData.get("school");
 
-  try {
-    await signUp(email, password);
-    return {
-      success: true,
-      message: "Sign up successful! Check your email for verification.",
-    };
-  } catch (error) {
-    return { success: false, message: error.message || "Sign up failed" };
-  }
+  const supabase = await createClient();
+
+  // 1. Create the Auth User AND pass metadata at the same time
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      // This data is sent to the 'auth.users' table immediately
+      data: {
+        username: username,
+        school: school,
+      },
+    },
+  });
+  if (error) return { success: false, message: error.message };
+
+  return {
+    success: true,
+    message:
+      "Account created! Please check your email or log in if confirmation is disabled.",
+  };
 }
 
 export async function signInAction(formData) {
   const email = formData.get("email");
   const password = formData.get("password");
 
-  try {
-    await signIn(email, password);
-    redirect("/posts");
-  } catch (error) {
-    return { success: false, message: error.message || "Sign in failed" };
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    return { success: false, message: error.message };
   }
+
+  // Notice: No redirect() here! The frontend will handle it.
+  return { success: true, message: "Logged in successfully." };
 }
 
 export async function resetPasswordAction(formData) {
   const email = formData.get("email");
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email);
 
-  try {
-    await resetPass(email);
-    return {
-      success: true,
-      message: "Password reset email sent! Check your inbox.",
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message || "Password reset failed",
-    };
-  }
+  if (error) return { success: false, message: error.message };
+  return { success: true, message: "Password reset email sent." };
 }
 
 export async function updatePasswordAction(formData) {
   const password = formData.get("password");
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password });
 
-  try {
-    await updatePass(password);
-    return { success: true, message: "Password updated successfully!" };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message || "Password update failed",
-    };
-  }
+  if (error) return { success: false, message: error.message };
+  return { success: true, message: "Password updated successfully." };
 }
