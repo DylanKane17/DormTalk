@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Textarea from "../../components/Textarea";
@@ -89,9 +90,16 @@ export default function PostDetailPage() {
         <Card className="mb-8 border-l-4 border-blue-500">
           <h1 className="text-3xl font-bold mb-2 text-white">{post.title}</h1>
           <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-            <span className="text-blue-400 font-semibold">
-              @{post.author?.username || "anonymous"}
-            </span>
+            {post.author?.id ? (
+              <Link
+                href={`/profile/${post.author.id}`}
+                className="text-blue-400 hover:text-blue-300 font-semibold"
+              >
+                @{post.author.username}
+              </Link>
+            ) : (
+              <span className="text-blue-400 font-semibold">@anonymous</span>
+            )}
             <span>•</span>
             <span className="bg-gray-800 px-2 py-0.5 rounded text-xs">
               {post.author?.school || "Unknown School"}
@@ -141,9 +149,18 @@ export default function PostDetailPage() {
                   className="bg-gray-800/30 border-gray-800"
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <span className="text-sm font-medium text-blue-400">
-                      @{comment.author?.username || "anonymous"}
-                    </span>
+                    {comment.author?.id ? (
+                      <Link
+                        href={`/profile/${comment.author.id}`}
+                        className="text-sm font-medium text-blue-400 hover:text-blue-300"
+                      >
+                        @{comment.author.username}
+                      </Link>
+                    ) : (
+                      <span className="text-sm font-medium text-blue-400">
+                        @anonymous
+                      </span>
+                    )}
                     <span className="text-xs text-gray-500">
                       {new Date(comment.created_at).toLocaleDateString()}
                     </span>

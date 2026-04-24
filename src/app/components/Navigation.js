@@ -2,16 +2,32 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { getCurrentUserProfileAction } from "../actions/profileActions";
 
 export default function Navigation() {
   const pathname = usePathname();
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const result = await getCurrentUserProfileAction();
+      if (result.success && result.data) {
+        setUserId(result.data.id);
+      }
+    };
+    getUserId();
+  }, []);
 
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/auth", label: "Auth" },
     { href: "/posts", label: "Posts" },
+    { href: "/search", label: "Search" },
+    { href: userId ? `/profile/${userId}` : "/profile/edit", label: "Profile" },
     { href: "/my-posts", label: "My Posts" },
     { href: "/my-comments", label: "My Comments" },
+    { href: "/moderation", label: "Moderation" },
   ];
 
   return (

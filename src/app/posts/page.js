@@ -12,6 +12,7 @@ import {
   createPostAction,
   deletePostAction,
 } from "../actions/postActions";
+import { flagPostAction } from "../actions/moderationActions";
 
 export default function PostsPage() {
   const [posts, setPosts] = useState([]);
@@ -66,6 +67,22 @@ export default function PostsPage() {
     }
   };
 
+  const handleFlagPost = async (postId) => {
+    const reason = prompt(
+      "Please provide a reason for flagging this post:",
+      "inappropriate",
+    );
+    if (!reason) return;
+
+    const result = await flagPostAction(postId, reason);
+    if (result.success) {
+      setAlert({ type: "success", message: result.message });
+      loadPosts();
+    } else {
+      setAlert({ type: "error", message: result.message });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -91,7 +108,13 @@ export default function PostsPage() {
         ) : (
           <div className="space-y-4">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post} showComments={true} />
+              <PostCard
+                key={post.id}
+                post={post}
+                showComments={true}
+                showFlag={true}
+                onFlag={handleFlagPost}
+              />
             ))}
           </div>
         )}

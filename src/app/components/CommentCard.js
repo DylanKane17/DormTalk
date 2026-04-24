@@ -29,8 +29,18 @@ export default function CommentCard({
       <p className="text-gray-300 mb-3">{comment.content}</p>
 
       <p className="text-sm text-gray-400">
-        By {comment.user?.email || "Unknown"} •{" "}
-        {new Date(comment.created_at).toLocaleDateString()}
+        By{" "}
+        {comment.author?.id ? (
+          <Link
+            href={`/profile/${comment.author.id}`}
+            className="text-cyan-400 hover:text-cyan-300"
+          >
+            @{comment.author.username}
+          </Link>
+        ) : (
+          <span>@Unknown</span>
+        )}{" "}
+        • {new Date(comment.created_at).toLocaleDateString()}
       </p>
 
       {showActions && (

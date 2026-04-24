@@ -8,8 +8,10 @@ export default function PostCard({
   post,
   onEdit,
   onDelete,
+  onFlag,
   showActions = false,
   showComments = false,
+  showFlag = false,
 }) {
   return (
     <Card className="hover:shadow-lg hover:shadow-cyan-900/30 transition-shadow">
@@ -21,8 +23,18 @@ export default function PostCard({
             </h3>
           </Link>
           <p className="text-sm text-gray-400 mt-1">
-            By @{post.author?.username || "Unknown"} •{" "}
-            {new Date(post.created_at).toLocaleDateString()}
+            By{" "}
+            {post.author?.id ? (
+              <Link
+                href={`/profile/${post.author.id}`}
+                className="text-cyan-400 hover:text-cyan-300"
+              >
+                @{post.author.username}
+              </Link>
+            ) : (
+              <span>@Unknown</span>
+            )}{" "}
+            • {new Date(post.created_at).toLocaleDateString()}
           </p>
         </div>
       </div>
@@ -48,6 +60,18 @@ export default function PostCard({
           </Button>
           <Button variant="danger" onClick={() => onDelete(post.id)}>
             Delete
+          </Button>
+        </div>
+      )}
+
+      {showFlag && (
+        <div className="flex gap-2 mt-4 pt-4 border-t border-gray-700">
+          <Button
+            variant="secondary"
+            onClick={() => onFlag && onFlag(post.id)}
+            size="sm"
+          >
+            🚩 Flag Post
           </Button>
         </div>
       )}
