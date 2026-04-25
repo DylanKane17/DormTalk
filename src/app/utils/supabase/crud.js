@@ -518,3 +518,202 @@ export async function getProfileWithStats(user_id) {
     error: null,
   };
 }
+
+// ==================== VOTING OPERATIONS ====================
+
+export async function voteOnPost(post_id, vote_type) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to vote." },
+    };
+  }
+
+  // Validate vote_type
+  if (vote_type !== 1 && vote_type !== -1) {
+    return {
+      data: null,
+      error: {
+        message: "Invalid vote type. Must be 1 (upvote) or -1 (downvote).",
+      },
+    };
+  }
+
+  // Use upsert to insert or update the vote
+  const { data, error } = await supabase
+    .from("post_votes")
+    .upsert({ post_id, user_id, vote_type }, { onConflict: "post_id,user_id" })
+    .select()
+    .single();
+
+  return { data, error };
+}
+
+export async function removeVote(post_id) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to remove a vote." },
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("post_votes")
+    .delete()
+    .eq("post_id", post_id)
+    .eq("user_id", user_id);
+
+  return { data, error };
+}
+
+export async function getUserVoteOnPost(post_id) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return { data: null, error: null };
+  }
+
+  const { data, error } = await supabase
+    .from("post_votes")
+    .select("vote_type")
+    .eq("post_id", post_id)
+    .eq("user_id", user_id)
+    .maybeSingle();
+
+  return { data, error };
+}
+
+export async function getPostVoteStats(post_id) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("post_votes")
+    .select("vote_type")
+    .eq("post_id", post_id);
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  const upvotes = data.filter((v) => v.vote_type === 1).length;
+  const downvotes = data.filter((v) => v.vote_type === -1).length;
+  const score = upvotes - downvotes;
+
+  return {
+    data: {
+      upvotes,
+      downvotes,
+      score,
+      total: data.length,
+    },
+    error: null,
+  };
+}
+
+// ==================== COMMENT VOTING OPERATIONS ====================
+
+export async function voteOnComment(comment_id, vote_type) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to vote." },
+    };
+  }
+
+  // Validate vote_type
+  if (vote_type !== 1 && vote_type !== -1) {
+    return {
+      data: null,
+      error: {
+        message: "Invalid vote type. Must be 1 (upvote) or -1 (downvote).",
+      },
+    };
+  }
+
+  // Use upsert to insert or update the vote
+  const { data, error } = await supabase
+    .from("comment_votes")
+    .upsert(
+      { comment_id, user_id, vote_type },
+      { onConflict: "comment_id,user_id" },
+    )
+    .select()
+    .single();
+
+  return { data, error };
+}
+
+export async function removeCommentVote(comment_id) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to remove a vote." },
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("comment_votes")
+    .delete()
+    .eq("comment_id", comment_id)
+    .eq("user_id", user_id);
+
+  return { data, error };
+}
+
+export async function getUserVoteOnComment(comment_id) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return { data: null, error: null };
+  }
+
+  const { data, error } = await supabase
+    .from("comment_votes")
+    .select("vote_type")
+    .eq("comment_id", comment_id)
+    .eq("user_id", user_id)
+    .maybeSingle();
+
+  return { data, error };
+}
+
+export async function getCommentVoteStats(comment_id) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("comment_votes")
+    .select("vote_type")
+    .eq("comment_id", comment_id);
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  const upvotes = data.filter((v) => v.vote_type === 1).length;
+  const downvotes = data.filter((v) => v.vote_type === -1).length;
+  const score = upvotes - downvotes;
+
+  return {
+    data: {
+      upvotes,
+      downvotes,
+      score,
+      total: data.length,
+    },
+    error: null,
+  };
+}

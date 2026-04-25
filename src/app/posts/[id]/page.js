@@ -7,6 +7,8 @@ import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Textarea from "../../components/Textarea";
 import Alert from "../../components/Alert";
+import VoteButtons from "../../components/VoteButtons";
+import CommentVoteButtons from "../../components/CommentVoteButtons";
 import { getPostWithCommentsAction } from "../../actions/postActions";
 import { createCommentAction } from "../../actions/commentActions";
 
@@ -107,9 +109,14 @@ export default function PostDetailPage() {
             <span>•</span>
             <span>{new Date(post.created_at).toLocaleDateString()}</span>
           </div>
-          <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
+          <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap mb-4">
             {post.content}
           </p>
+
+          {/* Voting buttons for the post */}
+          <div className="pt-4 border-t border-gray-700">
+            <VoteButtons postId={post.id} initialScore={0} />
+          </div>
         </Card>
 
         {/* COMMENTS SECTION */}
@@ -165,7 +172,15 @@ export default function PostDetailPage() {
                       {new Date(comment.created_at).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-gray-300">{comment.content}</p>
+                  <p className="text-gray-300 mb-3">{comment.content}</p>
+
+                  {/* Voting buttons for comments */}
+                  <div className="pt-2 border-t border-gray-700/50">
+                    <CommentVoteButtons
+                      commentId={comment.id}
+                      initialScore={0}
+                    />
+                  </div>
                 </Card>
               ))}
             </div>

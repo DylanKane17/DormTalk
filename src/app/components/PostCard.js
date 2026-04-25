@@ -3,6 +3,7 @@
 import Card from "./Card";
 import Button from "./Button";
 import Link from "next/link";
+import VoteButtons from "./VoteButtons";
 
 export default function PostCard({
   post,
@@ -12,6 +13,7 @@ export default function PostCard({
   showActions = false,
   showComments = false,
   showFlag = false,
+  showVoting = true,
 }) {
   return (
     <Card className="hover:shadow-lg hover:shadow-cyan-900/30 transition-shadow">
@@ -40,6 +42,12 @@ export default function PostCard({
       </div>
 
       <p className="text-gray-300 mb-4 line-clamp-3">{post.content}</p>
+
+      {showVoting && (
+        <div className="mb-4">
+          <VoteButtons postId={post.id} initialScore={0} />
+        </div>
+      )}
 
       {showComments && post.comments && (
         <p className="text-sm text-cyan-400 mb-3">
