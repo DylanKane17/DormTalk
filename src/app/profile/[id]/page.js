@@ -180,11 +180,13 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="border-t border-gray-700 pt-4 mt-6">
-            <p className="text-sm text-gray-500">
-              Member since {new Date(profile.created_at).toLocaleDateString()}
-            </p>
-          </div>
+          {profile.created_at && (
+            <div className="border-t border-gray-700 pt-4 mt-6">
+              <p className="text-sm text-gray-500">
+                Member since {new Date(profile.created_at).toLocaleDateString()}
+              </p>
+            </div>
+          )}
         </Card>
       </div>
     </div>
