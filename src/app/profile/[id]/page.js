@@ -16,11 +16,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    loadProfile();
-    loadCurrentUser();
-  }, [params.id]);
-
   const loadProfile = async () => {
     setLoading(true);
     const result = await getProfileWithStatsAction(params.id);
@@ -38,6 +33,12 @@ export default function ProfilePage() {
       setCurrentUser(result.data);
     }
   };
+
+  useEffect(() => {
+    loadProfile();
+    loadCurrentUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]);
 
   const isOwnProfile = currentUser && profile && currentUser.id === profile.id;
 
@@ -84,46 +85,75 @@ export default function ProfilePage() {
                 <p className="text-xl text-cyan-400">{profile.school}</p>
               )}
             </div>
-            {isOwnProfile && (
-              <Button onClick={() => router.push("/profile/edit")}>
-                Edit Profile
-              </Button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 uppercase mb-2">
-                Major
-              </h3>
-              <p className="text-white">{profile.major || "Not specified"}</p>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 uppercase mb-2">
-                Hometown
-              </h3>
-              <p className="text-white">
-                {profile.hometown || "Not specified"}
-              </p>
+            <div className="flex gap-2">
+              {isOwnProfile ? (
+                <Button onClick={() => router.push("/profile/edit")}>
+                  Edit Profile
+                </Button>
+              ) : (
+                currentUser && (
+                  <Button
+                    onClick={() => router.push(`/messages/${profile.id}`)}
+                  >
+                    Message
+                  </Button>
+                )
+              )}
             </div>
           </div>
 
-          {profile.activities && (
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase mb-2">
-                On Campus Activities
-              </h3>
-              <p className="text-white">{profile.activities}</p>
-            </div>
+          {/* High School Student Fields */}
+          {profile.user_type === "high_school" && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {profile.hometown && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-400 uppercase mb-2">
+                      Hometown
+                    </h3>
+                    <p className="text-white">{profile.hometown}</p>
+                  </div>
+                )}
+
+                {profile.intended_major && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-400 uppercase mb-2">
+                      Intended Major
+                    </h3>
+                    <p className="text-white">{profile.intended_major}</p>
+                  </div>
+                )}
+              </div>
+
+              {profile.interests && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-400 uppercase mb-2">
+                    Interests
+                  </h3>
+                  <p className="text-white">{profile.interests}</p>
+                </div>
+              )}
+
+              {profile.bio && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-400 uppercase mb-2">
+                    Bio
+                  </h3>
+                  <p className="text-white whitespace-pre-wrap">
+                    {profile.bio}
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
-          {profile.bio && (
+          {/* College Student Fields */}
+          {profile.user_type === "college" && profile.school && (
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-400 uppercase mb-2">
-                Bio
+                University
               </h3>
-              <p className="text-white">{profile.bio}</p>
+              <p className="text-white">{profile.school}</p>
             </div>
           )}
 

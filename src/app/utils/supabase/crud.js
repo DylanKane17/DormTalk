@@ -11,7 +11,7 @@ async function getUserID(supabase) {
 
 // ==================== POST OPERATIONS ====================
 
-export async function createPost(title, content) {
+export async function createPost(title, content, isAnonymous = false) {
   const supabase = await createClient();
   const user_id = await getUserID(supabase);
 
@@ -24,7 +24,7 @@ export async function createPost(title, content) {
 
   const { data, error } = await supabase
     .from("posts")
-    .insert([{ title, content, user_id }])
+    .insert([{ title, content, user_id, is_anonymous: isAnonymous }])
     .select()
     .single();
 
@@ -716,4 +716,160 @@ export async function getCommentVoteStats(comment_id) {
     },
     error: null,
   };
+}
+
+// ==================== MESSAGING OPERATIONS ====================
+
+export async function sendMessage(recipientId, content, isAnonymous = false) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to send messages." },
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      sender_id: user_id,
+      recipient_id: recipientId,
+      content: content,
+      is_anonymous: isAnonymous,
+    })
+    .select(
+      `
+      *,
+      sender:profiles!messages_sender_id_fkey(id, username),
+      recipient:profiles!messages_recipient_id_fkey(id, username)
+    `,
+    )
+    .single();
+
+  return { data, error };
+}
+
+export async function getConversation(otherUserId) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to view messages." },
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("messages")
+    .select(
+      `
+      *,
+      sender:profiles!messages_sender_id_fkey(id, username),
+      recipient:profiles!messages_recipient_id_fkey(id, username)
+    `,
+    )
+    .or(
+      `and(sender_id.eq.${user_id},recipient_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},recipient_id.eq.${user_id})`,
+    )
+    .order("created_at", { ascending: true });
+
+  return { data, error };
+}
+
+export async function getConversations() {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to view conversations." },
+    };
+  }
+
+  // Get all messages involving the current user
+  const { data: messages, error } = await supabase
+    .from("messages")
+    .select(
+      `
+      *,
+      sender:profiles!messages_sender_id_fkey(id, username),
+      recipient:profiles!messages_recipient_id_fkey(id, username)
+    `,
+    )
+    .or(`sender_id.eq.${user_id},recipient_id.eq.${user_id}`)
+    .order("created_at", { ascending: false });
+
+  if (error) return { data: null, error };
+
+  // Group messages by conversation partner
+  const conversationsMap = new Map();
+
+  messages.forEach((message) => {
+    const partnerId =
+      message.sender_id === user_id ? message.recipient_id : message.sender_id;
+    const partner =
+      message.sender_id === user_id ? message.recipient : message.sender;
+
+    if (!conversationsMap.has(partnerId)) {
+      conversationsMap.set(partnerId, {
+        partnerId,
+        partner,
+        lastMessage: message,
+        unreadCount: 0,
+      });
+    }
+
+    // Count unread messages from partner
+    if (message.recipient_id === user_id && !message.read) {
+      conversationsMap.get(partnerId).unreadCount++;
+    }
+  });
+
+  const conversations = Array.from(conversationsMap.values());
+  return { data: conversations, error: null };
+}
+
+export async function markConversationAsRead(otherUserId) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in." },
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("messages")
+    .update({ read: true })
+    .eq("sender_id", otherUserId)
+    .eq("recipient_id", user_id)
+    .eq("read", false);
+
+  return { data, error };
+}
+
+export async function deleteMessage(messageId) {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to delete messages." },
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("messages")
+    .delete()
+    .eq("id", messageId)
+    .eq("sender_id", user_id);
+
+  return { data, error };
 }

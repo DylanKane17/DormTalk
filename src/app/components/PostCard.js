@@ -26,7 +26,9 @@ export default function PostCard({
           </Link>
           <p className="text-sm text-gray-400 mt-1">
             By{" "}
-            {post.author?.id ? (
+            {post.is_anonymous ? (
+              <span className="text-gray-500 italic">Anonymous</span>
+            ) : post.author?.id ? (
               <Link
                 href={`/profile/${post.author.id}`}
                 className="text-cyan-400 hover:text-cyan-300"

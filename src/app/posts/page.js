@@ -13,6 +13,7 @@ import {
   deletePostAction,
 } from "../actions/postActions";
 import { flagPostAction } from "../actions/moderationActions";
+import { getCurrentUserProfileAction } from "../actions/profileActions";
 
 export default function PostsPage() {
   const [posts, setPosts] = useState([]);
@@ -20,28 +21,47 @@ export default function PostsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [userType, setUserType] = useState(null);
   const [alert, setAlert] = useState(null);
 
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+
+      // Load user profile to get user type
+      const profileResult = await getCurrentUserProfileAction();
+      if (profileResult.success && profileResult.data) {
+        setUserType(profileResult.data.user_type);
+      }
+
+      // Load posts
+      const postsResult = await getPostsAction(50, 0);
+      if (postsResult.success) {
+        setPosts(postsResult.data || []);
+      } else {
+        setAlert({ type: "error", message: postsResult.message });
+      }
+
+      setLoading(false);
+    };
+
+    loadData();
+  }, []);
+
   const loadPosts = async () => {
-    setLoading(true);
     const result = await getPostsAction(50, 0);
     if (result.success) {
       setPosts(result.data || []);
-    } else {
-      setAlert({ type: "error", message: result.message });
     }
-    setLoading(false);
   };
-
-  useEffect(() => {
-    loadPosts();
-  }, [loadPosts]);
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
+    formData.append("isAnonymous", isAnonymous.toString());
 
     const result = await createPostAction(formData);
     if (result.success) {
@@ -49,6 +69,7 @@ export default function PostsPage() {
       setIsModalOpen(false);
       setTitle("");
       setContent("");
+      setIsAnonymous(false);
       loadPosts();
     } else {
       setAlert({ type: "error", message: result.message });
@@ -140,6 +161,26 @@ export default function PostsPage() {
               rows={6}
               required
             />
+
+            {/* Anonymous posting option - only for high school students */}
+            {userType === "high_school" && (
+              <div className="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-700">
+                <input
+                  type="checkbox"
+                  id="isAnonymous"
+                  checked={isAnonymous}
+                  onChange={(e) => setIsAnonymous(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                />
+                <label
+                  htmlFor="isAnonymous"
+                  className="text-sm text-gray-300 cursor-pointer"
+                >
+                  Post anonymously (hide my username)
+                </label>
+              </div>
+            )}
+
             <div className="flex gap-2 justify-end">
               <Button
                 type="button"

@@ -16,8 +16,9 @@ import { revalidatePath } from "next/cache";
 export async function createPostAction(formData) {
   const title = formData.get("title");
   const content = formData.get("content");
+  const isAnonymous = formData.get("isAnonymous") === "true";
 
-  const { data, error } = await createPost(title, content);
+  const { data, error } = await createPost(title, content, isAnonymous);
 
   if (error) {
     return { success: false, message: error.message };

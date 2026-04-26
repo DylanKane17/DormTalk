@@ -32,16 +32,20 @@ export async function updateProfileAction(formData) {
   const updates = {};
 
   const school = formData.get("school");
-  const major = formData.get("major");
-  const activities = formData.get("activities");
-  const bio = formData.get("bio");
+  const username = formData.get("username");
+  // High school fields
+  const interests = formData.get("interests");
+  const intendedMajor = formData.get("intendedMajor");
   const hometown = formData.get("hometown");
+  const bio = formData.get("bio");
 
-  if (school) updates.school = school;
-  if (major) updates.major = major;
-  if (activities) updates.activities = activities;
-  if (bio) updates.bio = bio.slice(0, 100); // Enforce 100 char limit
-  if (hometown) updates.hometown = hometown;
+  if (school !== null) updates.school = school;
+  if (username) updates.username = username;
+  // High school fields
+  if (interests !== null) updates.interests = interests;
+  if (intendedMajor !== null) updates.intended_major = intendedMajor;
+  if (hometown !== null) updates.hometown = hometown;
+  if (bio !== null) updates.bio = bio;
 
   const { data, error } = await updateProfile(updates);
 
