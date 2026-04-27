@@ -37,6 +37,23 @@ export default function Navigation() {
       setLoading(false);
     };
     loadProfile();
+
+    // Listen for auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        // User logged in, reload profile
+        loadProfile();
+      } else {
+        // User logged out
+        setProfile(null);
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Close dropdown when clicking outside
@@ -60,7 +77,10 @@ export default function Navigation() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    window.location.href = "/auth";
+    setProfile(null);
+    setIsAuthenticated(false);
+    setIsAdmin(false);
+    router.push("/auth");
   };
 
   return (
