@@ -184,10 +184,19 @@ export async function signInAction(formData) {
 export async function resetPasswordAction(formData) {
   const email = formData.get("email");
   const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
+
+  // Get the current origin for the redirect URL
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/reset-password`,
+  });
 
   if (error) return { success: false, message: error.message };
-  return { success: true, message: "Password reset email sent." };
+  return {
+    success: true,
+    message: "Password reset email sent. Check your inbox!",
+  };
 }
 
 export async function updatePasswordAction(formData) {
