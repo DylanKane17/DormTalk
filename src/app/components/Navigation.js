@@ -96,7 +96,7 @@ export default function Navigation() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search posts..."
+                  placeholder="Search posts and/or users..."
                   className="w-full pl-12 pr-4 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-full text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] focus:border-transparent transition-all"
                 />
               </div>
