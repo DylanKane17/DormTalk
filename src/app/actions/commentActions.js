@@ -10,9 +10,16 @@ import {
   getCommentCount,
 } from "../utils/supabase/crud";
 import { revalidatePath } from "next/cache";
+import { validateContent } from "../utils/moderation";
 
 export async function createCommentAction(postId, formData) {
   const content = formData.get("content");
+
+  // Validate content for inappropriate content
+  const contentValidation = validateContent(content, "Comment");
+  if (!contentValidation.valid) {
+    return { success: false, message: contentValidation.error };
+  }
 
   const { data, error } = await createComment(postId, content);
 
@@ -57,6 +64,12 @@ export async function getCommentsByUserAction() {
 
 export async function updateCommentAction(commentId, formData) {
   const content = formData.get("content");
+
+  // Validate content for inappropriate content
+  const contentValidation = validateContent(content, "Comment");
+  if (!contentValidation.valid) {
+    return { success: false, message: contentValidation.error };
+  }
 
   const { data, error } = await updateComment(commentId, content);
 

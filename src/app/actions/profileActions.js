@@ -7,6 +7,7 @@ import {
   getProfileWithStats,
 } from "../utils/supabase/crud";
 import { revalidatePath } from "next/cache";
+import { validateContent } from "../utils/moderation";
 
 export async function getProfileByIdAction(userId) {
   const { data, error } = await getProfileById(userId);
@@ -38,6 +39,38 @@ export async function updateProfileAction(formData) {
   const intendedMajor = formData.get("intendedMajor");
   const hometown = formData.get("hometown");
   const bio = formData.get("bio");
+
+  // Validate bio for inappropriate content if provided
+  if (bio !== null && bio.trim()) {
+    const bioValidation = validateContent(bio, "Biography");
+    if (!bioValidation.valid) {
+      return { success: false, message: bioValidation.error };
+    }
+  }
+
+  // Validate interests for inappropriate content if provided
+  if (interests !== null && interests.trim()) {
+    const interestsValidation = validateContent(interests, "Interests");
+    if (!interestsValidation.valid) {
+      return { success: false, message: interestsValidation.error };
+    }
+  }
+
+  // Validate intended major for inappropriate content if provided
+  if (intendedMajor !== null && intendedMajor.trim()) {
+    const majorValidation = validateContent(intendedMajor, "Intended Major");
+    if (!majorValidation.valid) {
+      return { success: false, message: majorValidation.error };
+    }
+  }
+
+  // Validate hometown for inappropriate content if provided
+  if (hometown !== null && hometown.trim()) {
+    const hometownValidation = validateContent(hometown, "Hometown");
+    if (!hometownValidation.valid) {
+      return { success: false, message: hometownValidation.error };
+    }
+  }
 
   if (school !== null) updates.school = school;
   if (username) updates.username = username;

@@ -23,7 +23,31 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var storageKey = "theme-preference";
+                var legacyStorageKey = "theme";
+                var storedPreference = localStorage.getItem(storageKey) || localStorage.getItem(legacyStorageKey);
+                var preference = storedPreference === "light" || storedPreference === "dark" || storedPreference === "system"
+                  ? storedPreference
+                  : "system";
+                var resolvedTheme = preference;
+                if (preference === "system") {
+                  resolvedTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+                }
+                document.documentElement.classList.toggle("dark", resolvedTheme === "dark");
+                document.documentElement.setAttribute("data-theme", resolvedTheme);
+                document.documentElement.style.colorScheme = resolvedTheme;
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-white dark:bg-gray-900 transition-colors">
         <ThemeProvider>
           <Navigation />

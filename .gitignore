@@ -43,3 +43,6 @@ next-env.d.ts
 #cline helper files
 *.md
 *.sql
+
+#bad words list for moderation
+bad_words.txt

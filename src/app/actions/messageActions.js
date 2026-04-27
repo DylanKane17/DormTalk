@@ -8,6 +8,7 @@ import {
   deleteMessage,
 } from "../utils/supabase/crud";
 import { revalidatePath } from "next/cache";
+import { validateContent } from "../utils/moderation";
 
 export async function sendMessageAction(recipientId, formData) {
   const content = formData.get("content");
@@ -15,6 +16,12 @@ export async function sendMessageAction(recipientId, formData) {
 
   if (!content || !content.trim()) {
     return { success: false, message: "Message content is required." };
+  }
+
+  // Validate content for inappropriate content
+  const contentValidation = validateContent(content, "Message");
+  if (!contentValidation.valid) {
+    return { success: false, message: contentValidation.error };
   }
 
   // High school students are always anonymous

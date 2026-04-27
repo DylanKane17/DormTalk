@@ -12,11 +12,24 @@ import {
   deletePostWithComments,
 } from "../utils/supabase/crud";
 import { revalidatePath } from "next/cache";
+import { validateContent } from "../utils/moderation";
 
 export async function createPostAction(formData) {
   const title = formData.get("title");
   const content = formData.get("content");
   const userType = formData.get("userType");
+
+  // Validate title for inappropriate content
+  const titleValidation = validateContent(title, "Title");
+  if (!titleValidation.valid) {
+    return { success: false, message: titleValidation.error };
+  }
+
+  // Validate content for inappropriate content
+  const contentValidation = validateContent(content, "Content");
+  if (!contentValidation.valid) {
+    return { success: false, message: contentValidation.error };
+  }
 
   // High school students are always anonymous
   const isAnonymous = userType === "high_school";
@@ -65,6 +78,22 @@ export async function getPostsByUserAction() {
 export async function updatePostAction(postId, formData) {
   const title = formData.get("title");
   const content = formData.get("content");
+
+  // Validate title if provided
+  if (title) {
+    const titleValidation = validateContent(title, "Title");
+    if (!titleValidation.valid) {
+      return { success: false, message: titleValidation.error };
+    }
+  }
+
+  // Validate content if provided
+  if (content) {
+    const contentValidation = validateContent(content, "Content");
+    if (!contentValidation.valid) {
+      return { success: false, message: contentValidation.error };
+    }
+  }
 
   const updates = {};
   if (title) updates.title = title;
