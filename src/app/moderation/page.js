@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Button from "../components/Button";
 import PostCard from "../components/PostCard";
 import Card from "../components/Card";
@@ -12,7 +13,8 @@ import {
   hidePostAction,
   unhidePostAction,
 } from "../actions/moderationActions";
-import { deletePostAction } from "../actions/postActions";
+import { adminDeletePostAction } from "../actions/adminPostActions";
+import { checkIsAdmin } from "../utils/adminCheck";
 
 export default function ModerationPage() {
   const [flaggedPosts, setFlaggedPosts] = useState([]);
@@ -72,7 +74,7 @@ export default function ModerationPage() {
     if (!confirm("Are you sure you want to permanently delete this post?"))
       return;
 
-    const result = await deletePostAction(postId);
+    const result = await adminDeletePostAction(postId);
     if (result.success) {
       setAlert({ type: "success", message: result.message });
       loadFlaggedPosts();

@@ -9,6 +9,7 @@ import {
   getVisiblePosts,
 } from "../utils/supabase/crud";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "../utils/adminCheck";
 
 export async function flagPostAction(postId, reason = "inappropriate") {
   const { data, error } = await flagPost(postId, reason);
@@ -24,6 +25,13 @@ export async function flagPostAction(postId, reason = "inappropriate") {
 }
 
 export async function unflagPostAction(postId) {
+  // Require admin access
+  try {
+    await requireAdmin();
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+
   const { data, error } = await unflagPost(postId);
 
   if (error) {
@@ -37,6 +45,13 @@ export async function unflagPostAction(postId) {
 }
 
 export async function getFlaggedPostsAction(limit = 50) {
+  // Require admin access
+  try {
+    await requireAdmin();
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+
   const { data, error } = await getFlaggedPosts(limit);
 
   if (error) {
@@ -47,6 +62,13 @@ export async function getFlaggedPostsAction(limit = 50) {
 }
 
 export async function hidePostAction(postId) {
+  // Require admin access
+  try {
+    await requireAdmin();
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+
   const { data, error } = await hidePost(postId);
 
   if (error) {
@@ -60,6 +82,13 @@ export async function hidePostAction(postId) {
 }
 
 export async function unhidePostAction(postId) {
+  // Require admin access
+  try {
+    await requireAdmin();
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+
   const { data, error } = await unhidePost(postId);
 
   if (error) {

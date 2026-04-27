@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { getCurrentUserProfileAction } from "../actions/profileActions";
 import { createClient } from "../utils/supabase/client";
 import { useTheme } from "../context/ThemeContext";
+import { checkIsAdminAction } from "../actions/adminActions";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -14,6 +15,7 @@ export default function Navigation() {
   const { theme, toggleTheme } = useTheme();
   const [profile, setProfile] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -25,6 +27,10 @@ export default function Navigation() {
       if (result.success && result.data) {
         setProfile(result.data);
         setIsAuthenticated(true);
+
+        // Check if user is admin
+        const adminCheck = await checkIsAdminAction();
+        setIsAdmin(adminCheck.isAdmin);
       } else {
         setIsAuthenticated(false);
       }
@@ -325,10 +331,10 @@ export default function Navigation() {
                         Settings
                       </Link>
 
-                      {profile.is_moderator && (
+                      {isAdmin && (
                         <Link
                           href="/moderation"
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-orange-600 hover:bg-orange-50 transition-colors border-t border-gray-200"
                           onClick={() => setShowDropdown(false)}
                         >
                           <svg
@@ -344,7 +350,7 @@ export default function Navigation() {
                               d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                             />
                           </svg>
-                          Moderation
+                          Admin Dashboard
                         </Link>
                       )}
 

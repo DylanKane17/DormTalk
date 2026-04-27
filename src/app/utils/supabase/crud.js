@@ -112,6 +112,17 @@ export async function deletePost(post_id) {
   return { data, error };
 }
 
+export async function adminDeletePost(post_id) {
+  const supabase = await createClient();
+
+  // Call the admin_delete_post SQL function which bypasses RLS
+  const { data, error } = await supabase.rpc("admin_delete_post", {
+    post_id_param: post_id,
+  });
+
+  return { data, error };
+}
+
 // ==================== COMMENT OPERATIONS ====================
 
 export async function createComment(post_id, content) {
@@ -372,8 +383,7 @@ export async function getFlaggedPosts(limit = 50) {
     .select(
       `
       *,
-      author:profiles!posts_user_id_fkey (username, school),
-      flagger:profiles!posts_flagged_by_fkey (username),
+      author:profiles!posts_user_id_fkey (id, username, school),
       comments (count)
     `,
     )

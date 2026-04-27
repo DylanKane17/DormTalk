@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import Button from "../components/Button";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import PostCard from "../components/PostCard";
 import Card from "../components/Card";
 import Input from "../components/Input";
+import Button from "../components/Button";
 import Alert from "../components/Alert";
 import Link from "next/link";
 import {
@@ -13,49 +14,74 @@ import {
 } from "../actions/searchActions";
 
 export default function SearchPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchType, setSearchType] = useState("posts"); // 'posts' or 'profiles'
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") || "";
+
+  const [searchType, setSearchType] = useState("posts"); // 'posts' or 'students'
+  const [schoolFilter, setSchoolFilter] = useState("");
   const [posts, setPosts] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
-  const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!searchTerm.trim()) {
-      setAlert({ type: "error", message: "Please enter a search term" });
-      return;
-    }
+  // Filter profiles by school
+  const filteredProfiles = schoolFilter
+    ? profiles.filter((profile) =>
+        profile.school?.toLowerCase().includes(schoolFilter.toLowerCase()),
+      )
+    : profiles;
+
+  const performSearch = async (searchTerm) => {
+    if (!searchTerm.trim()) return;
 
     setLoading(true);
-    setHasSearched(true);
 
-    if (searchType === "posts") {
-      const result = await searchPostsAction(searchTerm, 50);
-      if (result.success) {
-        setPosts(result.data || []);
-        setProfiles([]);
-      } else {
-        setAlert({ type: "error", message: result.message });
-      }
-    } else {
-      const result = await searchProfilesAction(searchTerm, 20);
-      if (result.success) {
-        setProfiles(result.data || []);
-        setPosts([]);
-      } else {
-        setAlert({ type: "error", message: result.message });
-      }
+    // Search both posts and profiles
+    const [postsResult, profilesResult] = await Promise.all([
+      searchPostsAction(searchTerm, 50),
+      searchProfilesAction(searchTerm, 50),
+    ]);
+
+    if (postsResult.success) {
+      setPosts(postsResult.data || []);
+    }
+
+    if (profilesResult.success) {
+      setProfiles(profilesResult.data || []);
     }
 
     setLoading(false);
   };
 
+  // Load search results when query changes
+  useEffect(() => {
+    if (query) {
+      performSearch(query);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
+
+  if (!query) {
+    return (
+      <div className="min-h-screen bg-gray-900 py-8 px-4">
+        <div className="max-w-4xl mx-auto">
+          <Card>
+            <p className="text-center text-gray-400">
+              Use the search bar above to find posts and students
+            </p>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-8">Search</h1>
+        <h1 className="text-3xl font-bold text-white mb-2">Search Results</h1>
+        <p className="text-gray-400 mb-8">
+          Showing results for &ldquo;{query}&rdquo;
+        </p>
 
         {alert && (
           <Alert
@@ -65,119 +91,200 @@ export default function SearchPage() {
           />
         )}
 
-        <Card className="mb-8">
-          <form onSubmit={handleSearch} className="space-y-4">
-            <div className="flex gap-4 mb-4">
-              <button
-                type="button"
-                onClick={() => setSearchType("posts")}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                  searchType === "posts"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                Search Posts
-              </button>
-              <button
-                type="button"
-                onClick={() => setSearchType("profiles")}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                  searchType === "profiles"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                Search Profiles
-              </button>
-            </div>
+        {/* Filter Tabs */}
+        <div className="flex gap-4 mb-6">
+          <button
+            onClick={() => setSearchType("posts")}
+            className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all ${
+              searchType === "posts"
+                ? "bg-blue-600 text-white shadow-lg"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            }`}
+          >
+            Posts ({posts.length})
+          </button>
+          <button
+            onClick={() => setSearchType("students")}
+            className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all ${
+              searchType === "students"
+                ? "bg-blue-600 text-white shadow-lg"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            }`}
+          >
+            Students ({profiles.length})
+          </button>
+        </div>
 
-            <div className="flex gap-2">
+        {/* School Filter for Students */}
+        {searchType === "students" && profiles.length > 0 && (
+          <Card className="mb-6">
+            <div className="flex items-center gap-4">
+              <label className="text-gray-300 font-medium whitespace-nowrap">
+                Filter by School:
+              </label>
               <Input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={
-                  searchType === "posts"
-                    ? "Search by title or content..."
-                    : "Search by username or school..."
-                }
+                value={schoolFilter}
+                onChange={(e) => setSchoolFilter(e.target.value)}
+                placeholder="Enter school name..."
                 className="flex-1"
               />
-              <Button type="submit" disabled={loading}>
-                {loading ? "Searching..." : "Search"}
-              </Button>
+              {schoolFilter && (
+                <Button
+                  onClick={() => setSchoolFilter("")}
+                  variant="secondary"
+                  size="sm"
+                >
+                  Clear
+                </Button>
+              )}
             </div>
-          </form>
-        </Card>
+            {schoolFilter && (
+              <p className="text-sm text-gray-400 mt-2">
+                Showing {filteredProfiles.length} of {profiles.length} students
+              </p>
+            )}
+          </Card>
+        )}
 
         {loading ? (
-          <p className="text-center text-gray-400">Searching...</p>
-        ) : hasSearched ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <p className="text-gray-400 mt-4">Searching...</p>
+          </div>
+        ) : (
           <>
-            {searchType === "posts" ? (
-              posts.length === 0 ? (
-                <p className="text-center text-gray-400">
-                  No posts found matching "{searchTerm}"
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-white">
-                    Found {posts.length} post{posts.length !== 1 ? "s" : ""}
-                  </h2>
-                  {posts.map((post) => (
-                    <PostCard key={post.id} post={post} showComments={true} />
-                  ))}
-                </div>
-              )
-            ) : profiles.length === 0 ? (
-              <p className="text-center text-gray-400">
-                No profiles found matching "{searchTerm}"
-              </p>
-            ) : (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-white">
-                  Found {profiles.length} profile
-                  {profiles.length !== 1 ? "s" : ""}
-                </h2>
-                {profiles.map((profile) => (
-                  <Card
-                    key={profile.id}
-                    className="hover:shadow-lg hover:shadow-cyan-900/30 transition-shadow"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <Link href={`/profile/${profile.id}`}>
-                          <h3 className="text-lg font-semibold text-cyan-400 hover:text-cyan-300 mb-1 cursor-pointer">
-                            @{profile.username}
-                          </h3>
-                        </Link>
-                        <p className="text-gray-400 mb-2">{profile.school}</p>
-                        {profile.major && (
-                          <p className="text-sm text-gray-400 mb-1">
-                            <span className="font-medium">Major:</span>{" "}
-                            {profile.major}
-                          </p>
-                        )}
-                        {profile.bio && (
-                          <p className="text-gray-300 mt-2 italic">
-                            &quot;{profile.bio}&quot;
-                          </p>
-                        )}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Joined{" "}
-                        {new Date(profile.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
+            {/* Posts View */}
+            {searchType === "posts" && (
+              <>
+                {posts.length === 0 ? (
+                  <Card>
+                    <p className="text-center text-gray-400 py-8">
+                      No posts found matching &ldquo;{query}&rdquo;
+                    </p>
                   </Card>
-                ))}
-              </div>
+                ) : (
+                  <div className="space-y-4">
+                    {posts.map((post) => (
+                      <PostCard key={post.id} post={post} showComments={true} />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Students View */}
+            {searchType === "students" && (
+              <>
+                {filteredProfiles.length === 0 ? (
+                  <Card>
+                    <p className="text-center text-gray-400 py-8">
+                      {schoolFilter
+                        ? `No students found at &ldquo;${schoolFilter}&rdquo;`
+                        : `No students found matching &ldquo;${query}&rdquo;`}
+                    </p>
+                  </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredProfiles.map((profile) => (
+                      <Card
+                        key={profile.id}
+                        className="hover:shadow-lg hover:shadow-cyan-900/30 transition-shadow"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <Link href={`/profile/${profile.id}`}>
+                              <h3 className="text-lg font-semibold text-cyan-400 hover:text-cyan-300 mb-2 cursor-pointer">
+                                @{profile.username}
+                              </h3>
+                            </Link>
+
+                            {/* School */}
+                            <div className="flex items-center gap-2 mb-2">
+                              <svg
+                                className="w-4 h-4 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                />
+                              </svg>
+                              <p className="text-gray-300 font-medium">
+                                {profile.school}
+                              </p>
+                            </div>
+
+                            {/* Major */}
+                            {profile.major && (
+                              <div className="flex items-center gap-2 mb-2">
+                                <svg
+                                  className="w-4 h-4 text-gray-400"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                                  />
+                                </svg>
+                                <p className="text-gray-300">
+                                  <span className="text-gray-400">Major:</span>{" "}
+                                  {profile.major}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Activities */}
+                            {profile.activities && (
+                              <div className="flex items-start gap-2 mb-2">
+                                <svg
+                                  className="w-4 h-4 text-gray-400 mt-0.5"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"
+                                  />
+                                </svg>
+                                <p className="text-gray-300">
+                                  <span className="text-gray-400">
+                                    Activities:
+                                  </span>{" "}
+                                  {profile.activities}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Bio */}
+                            {profile.bio && (
+                              <p className="text-gray-400 mt-3 italic text-sm border-l-2 border-gray-700 pl-3">
+                                {profile.bio}
+                              </p>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Joined{" "}
+                            {new Date(profile.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </>
-        ) : (
-          <p className="text-center text-gray-400">
-            Enter a search term to find {searchType}
-          </p>
         )}
       </div>
     </div>
