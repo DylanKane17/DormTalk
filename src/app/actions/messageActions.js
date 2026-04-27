@@ -11,11 +11,14 @@ import { revalidatePath } from "next/cache";
 
 export async function sendMessageAction(recipientId, formData) {
   const content = formData.get("content");
-  const isAnonymous = formData.get("isAnonymous") === "true";
+  const userType = formData.get("userType");
 
   if (!content || !content.trim()) {
     return { success: false, message: "Message content is required." };
   }
+
+  // High school students are always anonymous
+  const isAnonymous = userType === "high_school";
 
   const { data, error } = await sendMessage(
     recipientId,

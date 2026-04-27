@@ -16,7 +16,10 @@ import { revalidatePath } from "next/cache";
 export async function createPostAction(formData) {
   const title = formData.get("title");
   const content = formData.get("content");
-  const isAnonymous = formData.get("isAnonymous") === "true";
+  const userType = formData.get("userType");
+
+  // High school students are always anonymous
+  const isAnonymous = userType === "high_school";
 
   const { data, error } = await createPost(title, content, isAnonymous);
 

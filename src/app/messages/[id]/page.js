@@ -26,7 +26,6 @@ export default function ConversationPage() {
   const [otherUser, setOtherUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [messageContent, setMessageContent] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [alert, setAlert] = useState(null);
@@ -85,12 +84,11 @@ export default function ConversationPage() {
     setSending(true);
     const formData = new FormData();
     formData.append("content", messageContent);
-    formData.append("isAnonymous", isAnonymous.toString());
+    formData.append("userType", currentUser?.user_type);
 
     const result = await sendMessageAction(params.id, formData);
     if (result.success) {
       setMessageContent("");
-      setIsAnonymous(false);
       loadConversation();
     } else {
       setAlert({ type: "error", message: result.message });
@@ -197,22 +195,13 @@ export default function ConversationPage() {
         {/* Message Input */}
         <Card>
           <form onSubmit={handleSendMessage} className="space-y-3">
-            {/* Anonymous toggle - only for high school students */}
+            {/* Info message for high school students */}
             {currentUser?.user_type === "high_school" && (
-              <div className="flex items-center space-x-2 p-2 bg-gray-800 rounded-lg border border-gray-700">
-                <input
-                  type="checkbox"
-                  id="isAnonymousMessage"
-                  checked={isAnonymous}
-                  onChange={(e) => setIsAnonymous(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                />
-                <label
-                  htmlFor="isAnonymousMessage"
-                  className="text-xs text-gray-300 cursor-pointer"
-                >
-                  Send anonymously (hide my username)
-                </label>
+              <div className="p-2 bg-blue-900/30 rounded-lg border border-blue-700/50">
+                <p className="text-xs text-blue-300">
+                  ℹ️ Your messages will be sent anonymously to protect your
+                  privacy.
+                </p>
               </div>
             )}
 

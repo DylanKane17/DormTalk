@@ -13,6 +13,7 @@ import {
   updatePostAction,
   deletePostAction,
 } from "../actions/postActions";
+import { getCurrentUserProfileAction } from "../actions/profileActions";
 
 export default function MyPostsPage() {
   const [posts, setPosts] = useState([]);
@@ -21,6 +22,7 @@ export default function MyPostsPage() {
   const [editingPost, setEditingPost] = useState(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [userType, setUserType] = useState(null);
   const [alert, setAlert] = useState(null);
 
   const loadPosts = async () => {
@@ -35,14 +37,26 @@ export default function MyPostsPage() {
   };
 
   useEffect(() => {
-    loadPosts();
-  }, [loadPosts]);
+    const loadData = async () => {
+      // Load user profile to get user type
+      const profileResult = await getCurrentUserProfileAction();
+      if (profileResult.success && profileResult.data) {
+        setUserType(profileResult.data.user_type);
+      }
+
+      await loadPosts();
+    };
+
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
+    formData.append("userType", userType);
 
     const result = await createPostAction(formData);
     if (result.success) {
@@ -165,6 +179,16 @@ export default function MyPostsPage() {
               rows={6}
               required
             />
+
+            {/* Info message for high school students when creating new posts */}
+            {!editingPost && userType === "high_school" && (
+              <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-700/50">
+                <p className="text-sm text-blue-300">
+                  ℹ️ Your posts will be anonymous to protect your privacy.
+                </p>
+              </div>
+            )}
+
             <div className="flex gap-2 justify-end">
               <Button
                 type="button"

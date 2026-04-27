@@ -107,17 +107,17 @@ export default function VoteButtons({ postId, initialScore = 0 }) {
   };
 
   const getScoreColor = () => {
-    if (score > 0) return "text-green-400";
-    if (score < 0) return "text-red-400";
-    return "text-gray-400";
+    if (score > 0) return "text-green-600 dark:text-green-400";
+    if (score < 0) return "text-red-600 dark:text-red-400";
+    return "text-gray-600 dark:text-gray-400";
   };
 
   if (isLoadingInitial) {
     return (
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-gray-700 rounded animate-pulse"></div>
-        <div className="w-8 h-6 bg-gray-700 rounded animate-pulse"></div>
-        <div className="w-8 h-8 bg-gray-700 rounded animate-pulse"></div>
+        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        <div className="w-8 h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
       </div>
     );
   }
@@ -127,11 +127,11 @@ export default function VoteButtons({ postId, initialScore = 0 }) {
       <button
         onClick={handleUpvote}
         disabled={loading}
-        className={`p-2 rounded-lg transition-all ${
+        className={`p-1.5 rounded-lg transition-all ${
           userVote === 1
-            ? "bg-green-600 text-white"
-            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-        } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
+            ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+            : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+        } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110 active:scale-95"}`}
         title="Upvote"
       >
         <svg
@@ -149,7 +149,7 @@ export default function VoteButtons({ postId, initialScore = 0 }) {
       </button>
 
       <span
-        className={`font-bold text-lg min-w-[2rem] text-center ${getScoreColor()}`}
+        className={`font-semibold text-base min-w-[2rem] text-center ${getScoreColor()}`}
       >
         {score}
       </span>
@@ -157,11 +157,11 @@ export default function VoteButtons({ postId, initialScore = 0 }) {
       <button
         onClick={handleDownvote}
         disabled={loading}
-        className={`p-2 rounded-lg transition-all ${
+        className={`p-1.5 rounded-lg transition-all ${
           userVote === -1
-            ? "bg-red-600 text-white"
-            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-        } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
+            ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
+            : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+        } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110 active:scale-95"}`}
         title="Downvote"
       >
         <svg

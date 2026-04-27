@@ -1,17 +1,119 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-  --cyan-accent: #06b6d4;
-  --cyan-dark: #0891b2;
-  --cyan-darker: #0e7490;
-  --gray-dark: #1f2937;
-  --gray-darker: #111827;
+  /* Blue & Green Theme - Light Mode */
+
+  /* Primary Colors */
+  --primary-blue: oklch(0.55 0.15 250);
+  --primary-green: oklch(0.6 0.12 150);
+  --blue-hover: oklch(0.5 0.15 250);
+  --blue-active: oklch(0.45 0.15 250);
+
+  /* Neutrals (blue-tinted) */
+  --background: oklch(0.98 0.005 250);
+  --surface: oklch(0.96 0.008 250);
+  --border: oklch(0.9 0.01 250);
+
+  /* Text */
+  --text-primary: oklch(0.2 0.01 250);
+  --text-secondary: oklch(0.5 0.01 250);
+  --text-tertiary: oklch(0.65 0.01 250);
+
+  /* Interactive */
+  --focus-ring: oklch(0.55 0.15 250 / 0.3);
+
+  /* Semantic Colors */
+  --success: oklch(0.6 0.12 150);
+  --error: oklch(0.55 0.15 10);
+  --warning: oklch(0.7 0.12 70);
+
+  /* Spacing (4px base) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease-out;
+  --transition-normal: 250ms ease-out;
+  --transition-slow: 350ms ease-out;
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue",
+    Arial, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark Mode */
+.dark {
+  --background: oklch(0.15 0.01 250);
+  --surface: oklch(0.18 0.01 250);
+  --border: oklch(0.25 0.01 250);
+  --text-primary: oklch(0.95 0.005 250);
+  --text-secondary: oklch(0.7 0.01 250);
+  --text-tertiary: oklch(0.55 0.01 250);
+}
+
+.dark body {
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+/* Typography Scale */
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--primary-blue);
+  color: white;
 }

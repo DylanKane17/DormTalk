@@ -21,7 +21,6 @@ export default function PostsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [userType, setUserType] = useState(null);
   const [alert, setAlert] = useState(null);
 
@@ -61,7 +60,7 @@ export default function PostsPage() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
-    formData.append("isAnonymous", isAnonymous.toString());
+    formData.append("userType", userType);
 
     const result = await createPostAction(formData);
     if (result.success) {
@@ -69,7 +68,6 @@ export default function PostsPage() {
       setIsModalOpen(false);
       setTitle("");
       setContent("");
-      setIsAnonymous(false);
       loadPosts();
     } else {
       setAlert({ type: "error", message: result.message });
@@ -105,10 +103,12 @@ export default function PostsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-white">All Posts</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            All Posts
+          </h1>
           <Button onClick={() => setIsModalOpen(true)}>Create Post</Button>
         </div>
 
@@ -162,22 +162,12 @@ export default function PostsPage() {
               required
             />
 
-            {/* Anonymous posting option - only for high school students */}
+            {/* Info message for high school students */}
             {userType === "high_school" && (
-              <div className="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-700">
-                <input
-                  type="checkbox"
-                  id="isAnonymous"
-                  checked={isAnonymous}
-                  onChange={(e) => setIsAnonymous(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                />
-                <label
-                  htmlFor="isAnonymous"
-                  className="text-sm text-gray-300 cursor-pointer"
-                >
-                  Post anonymously (hide my username)
-                </label>
+              <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-700/50">
+                <p className="text-sm text-blue-300">
+                  ℹ️ Your posts will be anonymous to protect your privacy.
+                </p>
               </div>
             )}
 
