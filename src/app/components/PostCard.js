@@ -23,12 +23,12 @@ export default function PostCard({
         : 0;
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="ui-gradient-ring">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           {/* Avatar */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-[linear-gradient(135deg,var(--brand-blue),var(--brand-green))] flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-[var(--shadow-sm)]">
             {post.is_anonymous
               ? "?"
               : post.author?.username
@@ -40,23 +40,23 @@ export default function PostCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               {post.is_anonymous ? (
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400 italic">
+                <span className="text-sm font-medium text-[var(--text-tertiary)] italic">
                   Anonymous
                 </span>
               ) : post.author?.id ? (
                 <Link
                   href={`/profile/${post.author.id}`}
-                  className="text-sm font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--brand-blue-strong)] transition-colors"
                 >
                   @{post.author.username}
                 </Link>
               ) : (
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <span className="text-sm font-medium text-[var(--text-tertiary)]">
                   @Unknown
                 </span>
               )}
-              <span className="text-gray-400 dark:text-gray-500">•</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-[var(--text-tertiary)]">•</span>
+              <span className="text-sm text-[var(--text-tertiary)]">
                 {new Date(post.created_at).toLocaleDateString()}
               </span>
             </div>
@@ -64,7 +64,7 @@ export default function PostCard({
 
           {/* More Options */}
           {(showActions || showFlag) && (
-            <button className="text-gray-400 hover:text-gray-600 p-1">
+            <button className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] p-1">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
@@ -75,16 +75,16 @@ export default function PostCard({
 
       {/* Content */}
       <Link href={`/posts/${post.id}`} className="block mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+        <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2 hover:text-[var(--brand-blue-strong)] transition-colors cursor-pointer">
           {post.title}
         </h3>
-        <p className="text-gray-700 dark:text-gray-300 line-clamp-3 leading-relaxed">
+        <p className="text-[var(--text-secondary)] line-clamp-3 leading-relaxed">
           {post.content}
         </p>
       </Link>
 
       {/* Actions Bar */}
-      <div className="flex items-center gap-6 pt-3 border-t border-gray-100 dark:border-gray-700">
+      <div className="flex items-center gap-6 pt-3 border-t border-[var(--border)]">
         {/* Voting */}
         {showVoting && (
           <div className="flex items-center">
@@ -96,7 +96,7 @@ export default function PostCard({
         {showComments && (
           <Link
             href={`/posts/${post.id}`}
-            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--brand-blue-strong)] transition-colors"
           >
             <svg
               className="w-5 h-5"
@@ -116,7 +116,7 @@ export default function PostCard({
         )}
 
         {/* Share */}
-        <button className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors ml-auto">
+        <button className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--brand-blue-strong)] transition-colors ml-auto">
           <svg
             className="w-5 h-5"
             fill="none"
@@ -135,7 +135,7 @@ export default function PostCard({
 
       {/* Action Buttons (Edit/Delete) */}
       {showActions && (
-        <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200">
+        <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--border)]">
           <Button
             variant="secondary"
             onClick={() => onEdit(post)}
@@ -155,7 +155,7 @@ export default function PostCard({
 
       {/* Flag Button */}
       {showFlag && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="mt-4 pt-4 border-t border-[var(--border)]">
           <Button
             variant="outline"
             onClick={() => onFlag && onFlag(post.id)}

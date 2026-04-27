@@ -48,10 +48,10 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-white dark:bg-gray-900 transition-colors">
+      <body className="min-h-full flex flex-col transition-colors duration-500">
         <ThemeProvider>
           <Navigation />
-          <main className="pt-16 flex-1">{children}</main>
+          <main className="pt-20 flex-1">{children}</main>
         </ThemeProvider>
       </body>
     </html>

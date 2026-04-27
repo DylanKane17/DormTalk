@@ -4,10 +4,14 @@ export default function Alert({ type = "info", message, onClose }) {
   if (!message) return null;
 
   const types = {
-    success: "bg-green-900/30 text-green-300 border-green-700",
-    error: "bg-red-900/30 text-red-300 border-red-700",
-    info: "bg-cyan-900/30 text-cyan-300 border-cyan-700",
-    warning: "bg-yellow-900/30 text-yellow-300 border-yellow-700",
+    success:
+      "bg-[color-mix(in_oklch,var(--brand-green)_20%,transparent)] text-[var(--text-primary)] border-[color-mix(in_oklch,var(--brand-green)_45%,var(--border))]",
+    error:
+      "bg-[color-mix(in_oklch,var(--error)_16%,transparent)] text-[var(--text-primary)] border-[color-mix(in_oklch,var(--error)_44%,var(--border))]",
+    info:
+      "bg-[color-mix(in_oklch,var(--brand-blue)_16%,transparent)] text-[var(--text-primary)] border-[color-mix(in_oklch,var(--brand-blue)_42%,var(--border))]",
+    warning:
+      "bg-[color-mix(in_oklch,var(--warning)_22%,transparent)] text-[var(--text-primary)] border-[color-mix(in_oklch,var(--warning)_44%,var(--border))]",
   };
 
   return (

@@ -109,16 +109,16 @@ export default function AuthPage() {
   // Don't render anything if user is authenticated (they'll be redirected)
   if (user) {
     return (
-      <div className="min-h-screen bg-gray-900 py-12 px-4 flex items-center justify-center">
-        <p className="text-gray-400">Redirecting...</p>
+      <div className="min-h-screen py-12 px-4 flex items-center justify-center">
+        <p className="text-[var(--text-secondary)]">Redirecting...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-md mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8 text-white">
+        <h1 className="text-3xl font-bold text-center mb-8 text-[var(--text-primary)]">
           DormTalk Authentication
         </h1>
 
@@ -163,7 +163,7 @@ export default function AuthPage() {
             {mode === "signup" && (
               <>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-300">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)]">
                     I am a:
                   </label>
                   <div className="flex gap-4">
@@ -174,9 +174,11 @@ export default function AuthPage() {
                         value="high_school"
                         checked={userType === "high_school"}
                         onChange={(e) => setUserType(e.target.value)}
-                        className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
+                        className="w-4 h-4 accent-[color:var(--brand-blue)]"
                       />
-                      <span className="text-gray-300">High School Student</span>
+                      <span className="text-[var(--text-secondary)]">
+                        High School Student
+                      </span>
                     </label>
                     <label className="flex items-center space-x-2 cursor-pointer">
                       <input
@@ -185,9 +187,11 @@ export default function AuthPage() {
                         value="college"
                         checked={userType === "college"}
                         onChange={(e) => setUserType(e.target.value)}
-                        className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
+                        className="w-4 h-4 accent-[color:var(--brand-blue)]"
                       />
-                      <span className="text-gray-300">College Student</span>
+                      <span className="text-[var(--text-secondary)]">
+                        College Student
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -265,7 +269,7 @@ export default function AuthPage() {
                   required
                 />
                 {mode === "signup" && userType === "college" && (
-                  <p className="text-xs text-yellow-400">
+                  <p className="text-xs text-[var(--warning)]">
                     ⚠️ College students must use their official .edu email that
                     matches their school
                   </p>
@@ -292,12 +296,12 @@ export default function AuthPage() {
                   id="ageConfirmed"
                   checked={ageConfirmed}
                   onChange={(e) => setAgeConfirmed(e.target.checked)}
-                  className="mt-1 w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                  className="mt-1 w-4 h-4 accent-[color:var(--brand-blue)] rounded"
                   required
                 />
                 <label
                   htmlFor="ageConfirmed"
-                  className="text-sm text-gray-300 cursor-pointer"
+                  className="text-sm text-[var(--text-secondary)] cursor-pointer"
                 >
                   I confirm that I am at least 16 years old
                 </label>

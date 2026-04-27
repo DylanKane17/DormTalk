@@ -1,10 +1,10 @@
 export default function Card({ children, className = "", hover = false }) {
   return (
     <div
-      className={`bg-blue-50 dark:bg-gray-800 rounded-xl border border-blue-100 dark:border-gray-700 p-6 transition-all duration-200 ${
+      className={`ui-shell rounded-2xl p-6 transition-all duration-300 ${
         hover
-          ? "hover:shadow-lg hover:scale-[1.01] cursor-pointer"
-          : "shadow-sm"
+          ? "hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5"
+          : "shadow-[var(--shadow-sm)]"
       } ${className}`}
     >
       {children}

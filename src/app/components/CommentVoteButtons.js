@@ -107,17 +107,17 @@ export default function CommentVoteButtons({ commentId, initialScore = 0 }) {
   };
 
   const getScoreColor = () => {
-    if (score > 0) return "text-green-400";
-    if (score < 0) return "text-red-400";
-    return "text-gray-400";
+    if (score > 0) return "text-[var(--brand-green-strong)]";
+    if (score < 0) return "text-[var(--error)]";
+    return "text-[var(--text-secondary)]";
   };
 
   if (isLoadingInitial) {
     return (
       <div className="flex items-center gap-1">
-        <div className="w-6 h-6 bg-gray-700 rounded animate-pulse"></div>
-        <div className="w-6 h-5 bg-gray-700 rounded animate-pulse"></div>
-        <div className="w-6 h-6 bg-gray-700 rounded animate-pulse"></div>
+        <div className="w-6 h-6 bg-[var(--surface-elevated)] rounded animate-pulse"></div>
+        <div className="w-6 h-5 bg-[var(--surface-elevated)] rounded animate-pulse"></div>
+        <div className="w-6 h-6 bg-[var(--surface-elevated)] rounded animate-pulse"></div>
       </div>
     );
   }
@@ -129,8 +129,8 @@ export default function CommentVoteButtons({ commentId, initialScore = 0 }) {
         disabled={loading}
         className={`p-1 rounded transition-all ${
           userVote === 1
-            ? "bg-green-600 text-white"
-            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            ? "bg-[var(--brand-green-strong)] text-white"
+            : "bg-[var(--surface-elevated)] text-[var(--text-secondary)] hover:bg-[var(--surface)]"
         } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
         title="Upvote"
       >
@@ -159,8 +159,8 @@ export default function CommentVoteButtons({ commentId, initialScore = 0 }) {
         disabled={loading}
         className={`p-1 rounded transition-all ${
           userVote === -1
-            ? "bg-red-600 text-white"
-            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            ? "bg-[var(--error)] text-white"
+            : "bg-[var(--surface-elevated)] text-[var(--text-secondary)] hover:bg-[var(--surface)]"
         } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
         title="Downvote"
       >

@@ -106,7 +106,7 @@ export default function PostsPage() {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">
             All Posts
           </h1>
           <Button onClick={() => setIsModalOpen(true)}>Create Post</Button>
@@ -121,9 +121,9 @@ export default function PostsPage() {
         )}
 
         {loading ? (
-          <p className="text-center text-gray-400">Loading posts...</p>
+          <p className="text-center text-[var(--text-tertiary)]">Loading posts...</p>
         ) : posts.length === 0 ? (
-          <p className="text-center text-gray-400">
+          <p className="text-center text-[var(--text-tertiary)]">
             No posts yet. Create the first one!
           </p>
         ) : (
@@ -164,8 +164,8 @@ export default function PostsPage() {
 
             {/* Info message for high school students */}
             {userType === "high_school" && (
-              <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-700/50">
-                <p className="text-sm text-blue-300">
+              <div className="p-3 rounded-xl border border-[color-mix(in_oklch,var(--brand-blue)_40%,var(--border))] bg-[color-mix(in_oklch,var(--brand-blue)_16%,transparent)]">
+                <p className="text-sm text-[var(--brand-blue-strong)]">
                   ℹ️ Your posts will be anonymous to protect your privacy.
                 </p>
               </div>

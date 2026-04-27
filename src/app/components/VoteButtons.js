@@ -107,17 +107,17 @@ export default function VoteButtons({ postId, initialScore = 0 }) {
   };
 
   const getScoreColor = () => {
-    if (score > 0) return "text-green-600 dark:text-green-400";
-    if (score < 0) return "text-red-600 dark:text-red-400";
-    return "text-gray-600 dark:text-gray-400";
+    if (score > 0) return "text-[var(--brand-green-strong)]";
+    if (score < 0) return "text-[var(--error)]";
+    return "text-[var(--text-secondary)]";
   };
 
   if (isLoadingInitial) {
     return (
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-        <div className="w-8 h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        <div className="w-8 h-8 bg-[var(--surface-elevated)] rounded animate-pulse"></div>
+        <div className="w-8 h-6 bg-[var(--surface-elevated)] rounded animate-pulse"></div>
+        <div className="w-8 h-8 bg-[var(--surface-elevated)] rounded animate-pulse"></div>
       </div>
     );
   }
@@ -129,8 +129,8 @@ export default function VoteButtons({ postId, initialScore = 0 }) {
         disabled={loading}
         className={`p-1.5 rounded-lg transition-all ${
           userVote === 1
-            ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
-            : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            ? "bg-[color-mix(in_oklch,var(--brand-green)_24%,transparent)] text-[var(--brand-green-strong)]"
+            : "text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)]"
         } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110 active:scale-95"}`}
         title="Upvote"
       >
@@ -159,8 +159,8 @@ export default function VoteButtons({ postId, initialScore = 0 }) {
         disabled={loading}
         className={`p-1.5 rounded-lg transition-all ${
           userVote === -1
-            ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
-            : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            ? "bg-[color-mix(in_oklch,var(--error)_24%,transparent)] text-[var(--error)]"
+            : "text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)]"
         } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110 active:scale-95"}`}
         title="Downvote"
       >

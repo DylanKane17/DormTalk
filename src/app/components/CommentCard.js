@@ -12,13 +12,13 @@ export default function CommentCard({
   showPost = false,
 }) {
   return (
-    <Card className="hover:shadow-lg hover:shadow-cyan-900/30 transition-shadow">
+    <Card className="ui-gradient-ring">
       {showPost && comment.post && (
-        <div className="mb-3 pb-3 border-b border-gray-700">
+        <div className="mb-3 pb-3 border-b border-[var(--border)]">
           <Link href={`/posts/${comment.post.id}`}>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-[var(--text-tertiary)]">
               On post:{" "}
-              <span className="text-cyan-400 hover:underline">
+              <span className="text-[var(--brand-blue)] hover:underline">
                 {comment.post.title}
               </span>
             </p>
@@ -26,14 +26,14 @@ export default function CommentCard({
         </div>
       )}
 
-      <p className="text-gray-300 mb-3">{comment.content}</p>
+      <p className="text-[var(--text-secondary)] mb-3">{comment.content}</p>
 
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-[var(--text-tertiary)]">
         By{" "}
         {comment.author?.id ? (
           <Link
             href={`/profile/${comment.author.id}`}
-            className="text-cyan-400 hover:text-cyan-300"
+            className="text-[var(--brand-blue)] hover:text-[var(--brand-blue-strong)]"
           >
             @{comment.author.username}
           </Link>
@@ -44,7 +44,7 @@ export default function CommentCard({
       </p>
 
       {showActions && (
-        <div className="flex gap-2 mt-4 pt-4 border-t border-gray-700">
+        <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--border)]">
           <Button variant="secondary" onClick={() => onEdit(comment)}>
             Edit
           </Button>

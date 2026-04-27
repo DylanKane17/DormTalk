@@ -7,21 +7,21 @@ export default function Button({
   className = "",
 }) {
   const baseStyles =
-    "px-4 py-2 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2";
+    "px-4 py-2.5 rounded-xl font-semibold tracking-tight transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent";
 
   const variants = {
     primary:
-      "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 focus:ring-blue-500 shadow-sm hover:shadow-md",
+      "text-white bg-[linear-gradient(135deg,var(--brand-blue),var(--brand-green))] hover:brightness-105 active:brightness-95 focus:ring-[var(--brand-blue)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)]",
     secondary:
-      "bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 active:bg-blue-100 focus:ring-blue-500",
+      "bg-[var(--surface)] text-[var(--brand-blue-strong)] border border-[var(--border-strong)] hover:bg-[var(--surface-elevated)] active:brightness-95 focus:ring-[var(--brand-blue)]",
     danger:
-      "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus:ring-red-500 shadow-sm hover:shadow-md",
+      "bg-[color-mix(in_oklch,var(--error)_88%,black_8%)] text-white hover:brightness-110 active:brightness-95 focus:ring-[var(--error)] shadow-[var(--shadow-sm)]",
     success:
-      "bg-green-600 text-white hover:bg-green-700 active:bg-green-800 focus:ring-green-500 shadow-sm hover:shadow-md",
+      "bg-[var(--brand-green-strong)] text-white hover:brightness-108 active:brightness-95 focus:ring-[var(--brand-green-strong)] shadow-[var(--shadow-sm)]",
     ghost:
-      "bg-transparent text-gray-700 hover:bg-gray-100 active:bg-gray-200 focus:ring-gray-400",
+      "bg-transparent text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)] active:brightness-95 focus:ring-[var(--brand-blue)]",
     outline:
-      "bg-transparent text-gray-700 border border-gray-300 hover:bg-gray-50 active:bg-gray-100 focus:ring-gray-400",
+      "bg-transparent text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--surface)] hover:border-[var(--border-strong)] active:brightness-95 focus:ring-[var(--brand-blue)]",
   };
 
   return (

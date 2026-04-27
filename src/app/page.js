@@ -5,156 +5,117 @@ import Button from "./components/Button";
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Hero Section */}
-          <div className="mb-16">
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent mb-6">
-              Welcome to DormTalk
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-              Your campus community platform for sharing ideas, discussions, and
-              connecting with fellow students.
+      <div className="max-w-6xl mx-auto px-4 py-12 md:py-16">
+        <div className="text-center mb-14">
+          <p className="inline-flex items-center px-3 py-1.5 rounded-full bg-[color-mix(in_oklch,var(--brand-blue)_14%,transparent)] text-[var(--brand-blue-strong)] text-xs font-semibold tracking-wide uppercase">
+            Campus conversations, elevated
+          </p>
+          <h1 className="mt-6 mb-5">Welcome to DormTalk</h1>
+          <p className="max-w-2xl mx-auto text-lg text-[var(--text-secondary)]">
+            A refined social space for student voices: post, comment, and connect
+            in a polished feed experience inspired by modern social apps.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap mt-8">
+            <Link href="/auth">
+              <Button className="px-8 py-3 text-base">Get Started</Button>
+            </Link>
+            <Link href="/posts">
+              <Button variant="secondary" className="px-8 py-3 text-base">
+                Browse Posts
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6 mb-14">
+          <Card hover className="text-left ui-gradient-ring">
+            <p className="text-sm font-semibold text-[var(--brand-green-strong)] mb-3">
+              Social-first publishing
             </p>
-            <div className="flex gap-4 justify-center flex-wrap">
-              <Link href="/auth">
-                <Button className="px-8 py-3 text-lg">Get Started</Button>
-              </Link>
-              <Link href="/posts">
-                <Button variant="secondary" className="px-8 py-3 text-lg">
-                  Browse Posts
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Feature Cards */}
-          <div className="grid md:grid-cols-2 gap-6 mb-16">
-            <Card hover className="text-left !bg-gray-800 !border-gray-700">
-              <div className="text-4xl mb-4">📝</div>
-              <h2 className="text-2xl font-bold mb-3 text-white">
-                Share Your Thoughts
-              </h2>
-              <p className="text-gray-300 mb-6">
-                Create posts, share ideas, and engage in meaningful discussions
-                with your campus community.
-              </p>
-              <Link href="/posts">
-                <Button>View All Posts</Button>
-              </Link>
-            </Card>
-
-            <Card hover className="text-left !bg-gray-800 !border-gray-700">
-              <div className="text-4xl mb-4">💬</div>
-              <h2 className="text-2xl font-bold mb-3 text-white">
-                Join Conversations
-              </h2>
-              <p className="text-gray-300 mb-6">
-                Comment on posts, reply to discussions, and build connections
-                with other students.
-              </p>
-              <Link href="/my-posts">
-                <Button variant="success">My Posts</Button>
-              </Link>
-            </Card>
-          </div>
-
-          {/* Getting Started Guide */}
-          <Card className="!bg-gradient-to-br !from-blue-50 !to-green-50 dark:!from-gray-800 dark:!to-gray-800 !border-blue-200 dark:!border-gray-700">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-              Getting Started
-            </h2>
-            <div className="text-left space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-gray-700 rounded-lg">
-                <span className="text-2xl flex-shrink-0">1️⃣</span>
-                <div>
-                  <strong className="text-gray-900 dark:text-white block mb-1">
-                    Sign Up or Sign In
-                  </strong>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Visit the{" "}
-                    <Link
-                      href="/auth"
-                      className="text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Auth page
-                    </Link>{" "}
-                    to create an account or log in.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-gray-700 rounded-lg">
-                <span className="text-2xl flex-shrink-0">2️⃣</span>
-                <div>
-                  <strong className="text-gray-900 dark:text-white block mb-1">
-                    Explore Posts
-                  </strong>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Browse all posts from the community and join discussions.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-gray-700 rounded-lg">
-                <span className="text-2xl flex-shrink-0">3️⃣</span>
-                <div>
-                  <strong className="text-gray-900 dark:text-white block mb-1">
-                    Create Content
-                  </strong>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Share your own posts and comments with the community.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-gray-700 rounded-lg">
-                <span className="text-2xl flex-shrink-0">4️⃣</span>
-                <div>
-                  <strong className="text-gray-900 dark:text-white block mb-1">
-                    Manage Your Content
-                  </strong>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Edit or delete your posts and comments from your profile
-                    pages.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <h2 className="mb-3">Share thoughts that actually start dialogue</h2>
+            <p className="text-[var(--text-secondary)] mb-6 max-w-[65ch]">
+              Publish updates, ask questions, and follow the pulse of your school
+              through a clean timeline that feels premium but approachable.
+            </p>
+            <Link href="/posts">
+              <Button>View Feed</Button>
+            </Link>
           </Card>
 
-          {/* Additional Features */}
-          <div className="mt-16 grid md:grid-cols-3 gap-6">
-            <div className="text-center p-6">
-              <div className="text-4xl mb-3">🔒</div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                Anonymous Options
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                High school students can post and message anonymously
+          <Card className="text-left">
+            <p className="text-sm font-semibold text-[var(--brand-blue-strong)] mb-3">
+              Private when it matters
+            </p>
+            <h3 className="mb-2">Anonymous mode for high school students</h3>
+            <p className="text-[var(--text-secondary)]">
+              Built-in privacy keeps conversations safer while still letting people
+              ask honest questions and support each other.
+            </p>
+          </Card>
+        </div>
+
+        <Card className="mb-12">
+          <h2 className="mb-6">Getting started is simple</h2>
+          <div className="grid md:grid-cols-2 gap-4 text-left">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--brand-blue-strong)] mb-2">
+                Step 1
+              </p>
+              <h3 className="mb-1">Sign up or sign in</h3>
+              <p className="text-[var(--text-secondary)]">
+                Start from the <Link href="/auth">auth page</Link> and choose your
+                student type.
               </p>
             </div>
-
-            <div className="text-center p-6">
-              <div className="text-4xl mb-3">🎓</div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                Campus Community
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Connect with students from your school and beyond
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--brand-blue-strong)] mb-2">
+                Step 2
+              </p>
+              <h3 className="mb-1">Explore the feed</h3>
+              <p className="text-[var(--text-secondary)]">
+                Discover active threads, trending ideas, and student perspectives.
               </p>
             </div>
-
-            <div className="text-center p-6">
-              <div className="text-4xl mb-3">⚡</div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                Real-time Updates
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Stay updated with instant notifications and live discussions
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--brand-green-strong)] mb-2">
+                Step 3
+              </p>
+              <h3 className="mb-1">Create and comment</h3>
+              <p className="text-[var(--text-secondary)]">
+                Share your own posts and keep conversations moving with replies.
+              </p>
+            </div>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--brand-green-strong)] mb-2">
+                Step 4
+              </p>
+              <h3 className="mb-1">Manage your content</h3>
+              <p className="text-[var(--text-secondary)]">
+                Edit or remove posts and comments anytime from your profile.
               </p>
             </div>
           </div>
+        </Card>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          <Card className="text-center">
+            <h3 className="mb-2">Anonymous options</h3>
+            <p className="text-[var(--text-secondary)] text-sm">
+              High school students can post and message anonymously.
+            </p>
+          </Card>
+          <Card className="text-center">
+            <h3 className="mb-2">Campus network</h3>
+            <p className="text-[var(--text-secondary)] text-sm">
+              Connect with peers from your school and nearby campuses.
+            </p>
+          </Card>
+          <Card className="text-center">
+            <h3 className="mb-2">Live community pulse</h3>
+            <p className="text-[var(--text-secondary)] text-sm">
+              Follow fresh discussions and trending posts in one place.
+            </p>
+          </Card>
         </div>
       </div>
     </div>

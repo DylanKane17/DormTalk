@@ -149,7 +149,7 @@ export default function EditProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="min-h-screen py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <p className="text-center text-gray-400">Loading profile...</p>
         </div>
@@ -159,7 +159,7 @@ export default function EditProfilePage() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="min-h-screen py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <Card>
             <p className="text-center text-gray-400">
@@ -172,7 +172,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white">Account Settings</h1>

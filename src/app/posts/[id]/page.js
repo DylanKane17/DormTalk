@@ -60,17 +60,19 @@ export default function PostDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 py-8 px-4 flex items-center justify-center">
-        <p className="text-gray-400 animate-pulse">Loading post details...</p>
+      <div className="min-h-screen py-8 px-4 flex items-center justify-center">
+        <p className="text-[var(--text-tertiary)] animate-pulse">
+          Loading post details...
+        </p>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="min-h-screen py-8 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-red-400 mb-4">Post not found</p>
+          <p className="text-[var(--error)] mb-4">Post not found</p>
           <Button onClick={() => window.history.back()}>Go Back</Button>
         </div>
       </div>
@@ -78,7 +80,7 @@ export default function PostDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {alert && (
           <Alert
@@ -89,47 +91,49 @@ export default function PostDetailPage() {
         )}
 
         {/* POST SECTION */}
-        <Card className="mb-8 border-l-4 border-blue-500">
-          <h1 className="text-3xl font-bold mb-2 text-white">{post.title}</h1>
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
+        <Card className="mb-8">
+          <h1 className="text-3xl font-bold mb-2 text-[var(--text-primary)]">
+            {post.title}
+          </h1>
+          <div className="flex items-center gap-2 text-sm text-[var(--text-tertiary)] mb-6">
             {post.author?.id ? (
               <Link
                 href={`/profile/${post.author.id}`}
-                className="text-blue-400 hover:text-blue-300 font-semibold"
+                className="text-[var(--brand-blue)] hover:text-[var(--brand-blue-strong)] font-semibold"
               >
                 @{post.author.username}
               </Link>
             ) : (
-              <span className="text-blue-400 font-semibold">@anonymous</span>
+              <span className="text-[var(--brand-blue)] font-semibold">@anonymous</span>
             )}
             <span>•</span>
-            <span className="bg-gray-800 px-2 py-0.5 rounded text-xs">
+            <span className="bg-[var(--surface-elevated)] px-2 py-0.5 rounded text-xs">
               {post.author?.school || "Unknown School"}
             </span>
             <span>•</span>
             <span>{new Date(post.created_at).toLocaleDateString()}</span>
           </div>
-          <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap mb-4">
+          <p className="text-[var(--text-secondary)] text-lg leading-relaxed whitespace-pre-wrap mb-4">
             {post.content}
           </p>
 
           {/* Voting buttons for the post */}
-          <div className="pt-4 border-t border-gray-700">
+          <div className="pt-4 border-t border-[var(--border)]">
             <VoteButtons postId={post.id} initialScore={0} />
           </div>
         </Card>
 
         {/* COMMENTS SECTION */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
+          <h2 className="text-2xl font-bold mb-6 text-[var(--text-primary)] flex items-center gap-2">
             Comments
-            <span className="text-sm bg-gray-800 text-gray-400 px-2 py-1 rounded-full">
+            <span className="text-sm bg-[var(--surface-elevated)] text-[var(--text-tertiary)] px-2 py-1 rounded-full">
               {post.comments?.length || 0}
             </span>
           </h2>
 
-          <Card className="mb-8 bg-gray-800/50 border-gray-700">
-            <h3 className="font-semibold mb-3 text-white">
+          <Card className="mb-8">
+            <h3 className="font-semibold mb-3 text-[var(--text-primary)]">
               Join the conversation
             </h3>
             <form onSubmit={handleCreateComment} className="space-y-4">
@@ -153,29 +157,29 @@ export default function PostDetailPage() {
               {post.comments.map((comment) => (
                 <Card
                   key={comment.id}
-                  className="bg-gray-800/30 border-gray-800"
+                  className="bg-[var(--surface)] border-[var(--border)]"
                 >
                   <div className="flex justify-between items-start mb-2">
                     {comment.author?.id ? (
                       <Link
                         href={`/profile/${comment.author.id}`}
-                        className="text-sm font-medium text-blue-400 hover:text-blue-300"
+                        className="text-sm font-medium text-[var(--brand-blue)] hover:text-[var(--brand-blue-strong)]"
                       >
                         @{comment.author.username}
                       </Link>
                     ) : (
-                      <span className="text-sm font-medium text-blue-400">
+                      <span className="text-sm font-medium text-[var(--brand-blue)]">
                         @anonymous
                       </span>
                     )}
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-[var(--text-tertiary)]">
                       {new Date(comment.created_at).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-gray-300 mb-3">{comment.content}</p>
+                  <p className="text-[var(--text-secondary)] mb-3">{comment.content}</p>
 
                   {/* Voting buttons for comments */}
-                  <div className="pt-2 border-t border-gray-700/50">
+                  <div className="pt-2 border-t border-[var(--border)]">
                     <CommentVoteButtons
                       commentId={comment.id}
                       initialScore={0}
@@ -185,8 +189,10 @@ export default function PostDetailPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 border-2 border-dashed border-gray-800 rounded-lg">
-              <p className="text-gray-500">No comments yet. Start the talk!</p>
+            <div className="text-center py-12 border-2 border-dashed border-[var(--border)] rounded-lg">
+              <p className="text-[var(--text-tertiary)]">
+                No comments yet. Start the talk!
+              </p>
             </div>
           )}
         </div>

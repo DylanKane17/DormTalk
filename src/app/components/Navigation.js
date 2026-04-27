@@ -64,13 +64,13 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors">
-      <div className="max-w-7xl mx-auto px-4">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_oklch,var(--surface)_88%,transparent)] backdrop-blur-xl shadow-[var(--shadow-sm)] transition-colors">
+      <div className="max-w-7xl mx-auto px-5">
         <div className="flex items-center justify-between h-16">
           {/* Logo - Left */}
           <Link
             href="/"
-            className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+            className="text-2xl font-black tracking-tight text-[var(--text-primary)] hover:text-[var(--brand-blue-strong)] transition-colors"
           >
             DormTalk
           </Link>
@@ -80,7 +80,7 @@ export default function Navigation() {
             <form onSubmit={handleSearch} className="relative">
               <div className="relative">
                 <svg
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-tertiary)]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -97,7 +97,7 @@ export default function Navigation() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search posts..."
-                  className="w-full pl-12 pr-4 py-2.5 bg-gray-100 border border-transparent rounded-full text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                  className="w-full pl-12 pr-4 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-full text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] focus:border-transparent transition-all"
                 />
               </div>
             </form>
@@ -106,7 +106,7 @@ export default function Navigation() {
           {/* Right Side - Profile or Sign In */}
           <div className="flex items-center gap-4">
             {loading ? (
-              <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+              <div className="w-10 h-10 rounded-full bg-[var(--surface-elevated)] animate-pulse" />
             ) : isAuthenticated && profile ? (
               <>
                 {/* Home Icon */}
@@ -114,8 +114,8 @@ export default function Navigation() {
                   href="/"
                   className={`p-2 rounded-lg transition-colors ${
                     pathname === "/"
-                      ? "text-blue-600"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "text-[var(--brand-blue-strong)]"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   }`}
                   title="Home"
                 >
@@ -139,8 +139,8 @@ export default function Navigation() {
                   href="/messages"
                   className={`p-2 rounded-lg transition-colors ${
                     pathname.startsWith("/messages")
-                      ? "text-blue-600"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "text-[var(--brand-blue-strong)]"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   }`}
                   title="Messages"
                 >
@@ -166,8 +166,8 @@ export default function Navigation() {
                   href="/posts"
                   className={`p-2 rounded-lg transition-colors ${
                     pathname === "/posts"
-                      ? "text-blue-600"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "text-[var(--brand-blue-strong)]"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   }`}
                   title="Create Post"
                 >
@@ -189,7 +189,7 @@ export default function Navigation() {
                 {/* Theme Toggle */}
                 <button
                   onClick={toggleTheme}
-                  className="p-2 rounded-lg text-gray-600 hover:text-gray-900 transition-colors"
+                  className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                   title={
                     theme === "light"
                       ? "Switch to dark mode"
@@ -231,19 +231,19 @@ export default function Navigation() {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-2 p-1 rounded-full hover:bg-[var(--surface-elevated)] transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center text-white font-semibold text-sm">
+                    <div className="w-10 h-10 rounded-full bg-[linear-gradient(135deg,var(--brand-blue),var(--brand-green))] flex items-center justify-center text-white font-semibold text-sm shadow-[var(--shadow-sm)]">
                       {profile.username?.charAt(0).toUpperCase() || "U"}
                     </div>
                   </button>
 
                   {/* Dropdown Menu */}
                   {showDropdown && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="absolute right-0 mt-2 w-56 ui-shell rounded-2xl border border-[var(--border)] py-2 animate-in fade-in slide-in-from-top-2 duration-200">
                       <Link
                         href={`/profile/${profile.id}`}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
                         onClick={() => setShowDropdown(false)}
                       >
                         <svg
@@ -264,7 +264,7 @@ export default function Navigation() {
 
                       <Link
                         href="/my-posts"
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
                         onClick={() => setShowDropdown(false)}
                       >
                         <svg
@@ -285,7 +285,7 @@ export default function Navigation() {
 
                       <Link
                         href="/my-comments"
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
                         onClick={() => setShowDropdown(false)}
                       >
                         <svg
@@ -306,7 +306,7 @@ export default function Navigation() {
 
                       <Link
                         href="/profile/edit"
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
                         onClick={() => setShowDropdown(false)}
                       >
                         <svg
@@ -334,7 +334,7 @@ export default function Navigation() {
                       {isAdmin && (
                         <Link
                           href="/moderation"
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-orange-600 hover:bg-orange-50 transition-colors border-t border-gray-200"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--warning)] hover:bg-[color-mix(in_oklch,var(--warning)_18%,transparent)] transition-colors border-t border-[var(--border)]"
                           onClick={() => setShowDropdown(false)}
                         >
                           <svg
@@ -354,11 +354,11 @@ export default function Navigation() {
                         </Link>
                       )}
 
-                      <div className="border-t border-gray-200 my-2" />
+                      <div className="border-t border-[var(--border)] my-2" />
 
                       <button
                         onClick={handleSignOut}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--error)] hover:bg-[color-mix(in_oklch,var(--error)_14%,transparent)] transition-colors w-full text-left"
                       >
                         <svg
                           className="w-5 h-5"
@@ -380,13 +380,56 @@ export default function Navigation() {
                 </div>
               </>
             ) : (
-              /* Sign In Button for unauthenticated users */
-              <Link
-                href="/auth"
-                className="px-6 py-2 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors"
-              >
-                Sign In
-              </Link>
+              <>
+                {/* Theme Toggle for unauthenticated users */}
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                  title={
+                    theme === "light"
+                      ? "Switch to dark mode"
+                      : "Switch to light mode"
+                  }
+                >
+                  {theme === "light" ? (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
+                    </svg>
+                  )}
+                </button>
+
+                {/* Auth Button for unauthenticated users */}
+                <Link
+                  href="/auth"
+                  className="px-6 py-2.5 bg-[linear-gradient(135deg,var(--brand-blue),var(--brand-green))] !text-white hover:!text-white rounded-full font-semibold hover:brightness-105 transition-all shadow-[var(--shadow-sm)]"
+                >
+                  Sign Up or Sign In
+                </Link>
+              </>
             )}
           </div>
         </div>
