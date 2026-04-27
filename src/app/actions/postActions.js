@@ -19,6 +19,15 @@ export async function createPostAction(formData) {
   const content = formData.get("content");
   const userType = formData.get("userType");
 
+  // College students cannot create posts
+  if (userType === "college") {
+    return {
+      success: false,
+      message:
+        "College students cannot create posts. Only high school students can post.",
+    };
+  }
+
   // Validate title for inappropriate content
   const titleValidation = validateContent(title, "Title");
   if (!titleValidation.valid) {

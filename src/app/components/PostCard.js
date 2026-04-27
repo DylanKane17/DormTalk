@@ -41,7 +41,16 @@ export default function PostCard({
             <div className="flex items-center gap-2">
               {post.is_anonymous ? (
                 <span className="text-sm font-medium text-[var(--text-tertiary)] italic">
-                  Anonymous
+                  {(() => {
+                    const info = [
+                      post.author?.hometown,
+                      post.author?.intended_major,
+                      post.author?.interests,
+                    ]
+                      .filter(Boolean)
+                      .join(" • ");
+                    return info || "High School Student";
+                  })()}
                 </span>
               ) : post.author?.id ? (
                 <Link

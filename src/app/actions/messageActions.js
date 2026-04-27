@@ -18,6 +18,21 @@ export async function sendMessageAction(recipientId, formData) {
     return { success: false, message: "Message content is required." };
   }
 
+  // College students can only reply to existing conversations, not initiate new ones
+  if (userType === "college") {
+    const conversationResult = await getConversation(recipientId);
+    if (
+      conversationResult.success &&
+      (!conversationResult.data || conversationResult.data.length === 0)
+    ) {
+      return {
+        success: false,
+        message:
+          "College students cannot initiate new conversations. You can only reply to messages you receive.",
+      };
+    }
+  }
+
   // Validate content for inappropriate content
   const contentValidation = validateContent(content, "Message");
   if (!contentValidation.valid) {

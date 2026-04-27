@@ -296,10 +296,12 @@ export async function searchProfiles(searchTerm, limit = 20) {
     return { data: [], error: null };
   }
 
+  // Only return college students in search results
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
     .or(`username.ilike.%${searchTerm}%,school.ilike.%${searchTerm}%`)
+    .eq("user_type", "college")
     .limit(limit);
 
   return { data, error };

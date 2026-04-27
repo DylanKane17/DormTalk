@@ -109,7 +109,14 @@ export default function PostsPage() {
           <h1 className="text-3xl font-bold text-[var(--text-primary)]">
             All Posts
           </h1>
-          <Button onClick={() => setIsModalOpen(true)}>Create Post</Button>
+          {userType === "high_school" && (
+            <Button onClick={() => setIsModalOpen(true)}>Create Post</Button>
+          )}
+          {userType === "college" && (
+            <div className="text-sm text-[var(--text-tertiary)] italic">
+              Only high school students can create posts
+            </div>
+          )}
         </div>
 
         {alert && (
@@ -121,7 +128,9 @@ export default function PostsPage() {
         )}
 
         {loading ? (
-          <p className="text-center text-[var(--text-tertiary)]">Loading posts...</p>
+          <p className="text-center text-[var(--text-tertiary)]">
+            Loading posts...
+          </p>
         ) : posts.length === 0 ? (
           <p className="text-center text-[var(--text-tertiary)]">
             No posts yet. Create the first one!

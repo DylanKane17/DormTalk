@@ -12,13 +12,11 @@ export default function Home() {
           </p>
           <h1 className="mt-6 mb-5">Welcome to DormTalk</h1>
           <p className="max-w-2xl mx-auto text-lg text-[var(--text-secondary)]">
-            A refined social space for student voices: post, comment, and connect
-            in a polished feed experience inspired by modern social apps.
+            A refined social space for student voices: post, comment, and
+            connect in a polished feed experience inspired by modern social
+            apps.
           </p>
           <div className="flex gap-4 justify-center flex-wrap mt-8">
-            <Link href="/auth">
-              <Button className="px-8 py-3 text-base">Get Started</Button>
-            </Link>
             <Link href="/posts">
               <Button variant="secondary" className="px-8 py-3 text-base">
                 Browse Posts
@@ -32,10 +30,13 @@ export default function Home() {
             <p className="text-sm font-semibold text-[var(--brand-green-strong)] mb-3">
               Social-first publishing
             </p>
-            <h2 className="mb-3">Share thoughts that actually start dialogue</h2>
+            <h2 className="mb-3">
+              Share thoughts that actually start dialogue
+            </h2>
             <p className="text-[var(--text-secondary)] mb-6 max-w-[65ch]">
-              Publish updates, ask questions, and follow the pulse of your school
-              through a clean timeline that feels premium but approachable.
+              Publish updates, ask questions, and follow the pulse of your
+              school through a clean timeline that feels premium but
+              approachable.
             </p>
             <Link href="/posts">
               <Button>View Feed</Button>
@@ -48,8 +49,8 @@ export default function Home() {
             </p>
             <h3 className="mb-2">Anonymous mode for high school students</h3>
             <p className="text-[var(--text-secondary)]">
-              Built-in privacy keeps conversations safer while still letting people
-              ask honest questions and support each other.
+              Built-in privacy keeps conversations safer while still letting
+              people ask honest questions and support each other.
             </p>
           </Card>
         </div>
@@ -63,8 +64,8 @@ export default function Home() {
               </p>
               <h3 className="mb-1">Sign up or sign in</h3>
               <p className="text-[var(--text-secondary)]">
-                Start from the <Link href="/auth">auth page</Link> and choose your
-                student type.
+                Start from the <Link href="/auth">auth page</Link> and choose
+                your student type.
               </p>
             </div>
             <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
@@ -73,7 +74,8 @@ export default function Home() {
               </p>
               <h3 className="mb-1">Explore the feed</h3>
               <p className="text-[var(--text-secondary)]">
-                Discover active threads, trending ideas, and student perspectives.
+                Discover active threads, trending ideas, and student
+                perspectives.
               </p>
             </div>
             <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
