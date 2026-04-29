@@ -78,6 +78,7 @@ export default function PostCard({
                   @Unknown
                 </span>
               )}
+              <span className="text-[var(--text-tertiary)]">•</span>
               <span className="text-sm text-[var(--text-tertiary)]">
                 {new Date(post.created_at).toLocaleDateString()}
               </span>
