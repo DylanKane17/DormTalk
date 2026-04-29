@@ -132,9 +132,6 @@ export default function ConversationPage() {
                     })()
                   : `@${otherUser.username}`}
               </h1>
-              {otherUser.school && (
-                <p className="text-sm text-gray-400">{otherUser.school}</p>
-              )}
             </div>
           )}
         </div>

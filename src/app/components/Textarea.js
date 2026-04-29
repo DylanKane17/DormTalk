@@ -27,7 +27,7 @@ export default function Textarea({
         rows={rows}
         disabled={disabled}
         maxLength={maxLength}
-        className={`px-4 py-2.5 bg-[var(--surface)] border rounded-xl text-[var(--text-primary)] placeholder-[var(--text-tertiary)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] focus:border-transparent resize-vertical disabled:opacity-50 disabled:cursor-not-allowed ${
+        className={`px-4 py-2.5 bg-[var(--surface)] border rounded-xl text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] placeholder:opacity-40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] focus:border-transparent resize-vertical disabled:opacity-50 disabled:cursor-not-allowed ${
           error
             ? "border-[var(--error)]/70 focus:ring-[var(--error)]"
             : "border-[var(--border)] hover:border-[var(--border-strong)]"

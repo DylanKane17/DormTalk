@@ -43,7 +43,6 @@ export default function PostCard({
                 <span className="text-sm font-medium text-[var(--text-tertiary)] italic">
                   {(() => {
                     const info = [
-                      post.author?.hometown,
                       post.author?.intended_major,
                       post.author?.interests,
                     ]

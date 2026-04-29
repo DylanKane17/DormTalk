@@ -88,8 +88,8 @@ export default function SchoolAutocomplete({
 
   return (
     <div ref={wrapperRef} className="relative">
-      <label className="block text-sm font-medium text-gray-300 mb-2">
-        Your School {required && <span className="text-red-500">*</span>}
+      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+        Your School {required && <span className="text-[var(--error)]">*</span>}
       </label>
       <input
         ref={inputRef}
@@ -101,27 +101,31 @@ export default function SchoolAutocomplete({
         placeholder={placeholder}
         required={required}
         disabled={disabled}
-        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] placeholder:opacity-40 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
         autoComplete="off"
       />
 
       {/* Dropdown Results */}
       {isOpen && results.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {results.map((school, index) => (
             <button
               key={school.domain}
               type="button"
               onClick={() => handleSelectSchool(school)}
-              className={`w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors ${
-                index === selectedIndex ? "bg-gray-700" : ""
+              className={`w-full px-4 py-3 text-left hover:bg-[var(--surface-elevated)] transition-colors ${
+                index === selectedIndex ? "bg-[var(--surface-elevated)]" : ""
               } ${index === 0 ? "rounded-t-lg" : ""} ${
                 index === results.length - 1 ? "rounded-b-lg" : ""
               }`}
             >
               <div className="flex flex-col">
-                <span className="text-white font-medium">{school.name}</span>
-                <span className="text-gray-400 text-sm">@{school.domain}</span>
+                <span className="text-[var(--text-primary)] font-medium">
+                  {school.name}
+                </span>
+                <span className="text-[var(--text-secondary)] text-sm">
+                  @{school.domain}
+                </span>
               </div>
             </button>
           ))}
@@ -130,8 +134,8 @@ export default function SchoolAutocomplete({
 
       {/* No Results Message */}
       {isOpen && query.length >= 2 && results.length === 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-4">
-          <p className="text-gray-400 text-sm">
+        <div className="absolute z-50 w-full mt-1 bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-lg p-4">
+          <p className="text-[var(--text-secondary)] text-sm">
             No schools found. Try a different search or type your school name
             manually.
           </p>
@@ -139,7 +143,7 @@ export default function SchoolAutocomplete({
       )}
 
       {/* Helper Text */}
-      <p className="mt-1 text-xs text-gray-500">
+      <p className="mt-1 text-xs text-[var(--text-tertiary)]">
         Start typing to search for your school
       </p>
     </div>
