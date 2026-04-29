@@ -96,7 +96,22 @@ export default function PostDetailPage() {
             {post.title}
           </h1>
           <div className="flex items-center gap-2 text-sm text-[var(--text-tertiary)] mb-6">
-            {post.author?.id ? (
+            {post.author?.user_type === "high_school" ? (
+              <span className="text-[var(--text-secondary)] font-medium">
+                {(() => {
+                  const parts = [];
+                  if (post.author?.intended_major) {
+                    parts.push(`Interested in ${post.author.intended_major}`);
+                  }
+                  if (post.author?.interests) {
+                    parts.push(post.author.interests);
+                  }
+                  return parts.length > 0
+                    ? parts.join(" • ")
+                    : "High School Student";
+                })()}
+              </span>
+            ) : post.author?.id ? (
               <Link
                 href={`/profile/${post.author.id}`}
                 className="text-[var(--brand-blue)] hover:text-[var(--brand-blue-strong)] font-semibold"
@@ -104,7 +119,9 @@ export default function PostDetailPage() {
                 @{post.author.username}
               </Link>
             ) : (
-              <span className="text-[var(--brand-blue)] font-semibold">@anonymous</span>
+              <span className="text-[var(--brand-blue)] font-semibold">
+                @anonymous
+              </span>
             )}
             <span>•</span>
             <span className="bg-[var(--surface-elevated)] px-2 py-0.5 rounded text-xs">
@@ -160,7 +177,24 @@ export default function PostDetailPage() {
                   className="bg-[var(--surface)] border-[var(--border)]"
                 >
                   <div className="flex justify-between items-start mb-2">
-                    {comment.author?.id ? (
+                    {comment.author?.user_type === "high_school" ? (
+                      <span className="text-sm font-medium text-[var(--text-secondary)]">
+                        {(() => {
+                          const parts = [];
+                          if (comment.author?.intended_major) {
+                            parts.push(
+                              `Interested in ${comment.author.intended_major}`,
+                            );
+                          }
+                          if (comment.author?.interests) {
+                            parts.push(comment.author.interests);
+                          }
+                          return parts.length > 0
+                            ? parts.join(" • ")
+                            : "High School Student";
+                        })()}
+                      </span>
+                    ) : comment.author?.id ? (
                       <Link
                         href={`/profile/${comment.author.id}`}
                         className="text-sm font-medium text-[var(--brand-blue)] hover:text-[var(--brand-blue-strong)]"
@@ -176,7 +210,9 @@ export default function PostDetailPage() {
                       {new Date(comment.created_at).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-[var(--text-secondary)] mb-3">{comment.content}</p>
+                  <p className="text-[var(--text-secondary)] mb-3">
+                    {comment.content}
+                  </p>
 
                   {/* Voting buttons for comments */}
                   <div className="pt-2 border-t border-[var(--border)]">

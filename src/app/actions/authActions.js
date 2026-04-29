@@ -159,6 +159,37 @@ export async function signUpAction(formData) {
   });
   if (error) return { success: false, message: error.message };
 
+  // 2. Manually create the profile (database trigger isn't working)
+  if (data.user) {
+    const profileData = {
+      id: data.user.id,
+      username: username,
+      school: school || "",
+      email_domain: emailDomain,
+      user_type: userType,
+      is_verified: isVerified,
+      age_confirmed: ageConfirmed,
+    };
+
+    // Add high school specific fields if applicable
+    if (userType === "high_school") {
+      profileData.interests = interests;
+      profileData.intended_major = intendedMajor;
+      profileData.hometown = hometown;
+      profileData.bio = bio;
+    }
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .insert([profileData]);
+
+    if (profileError) {
+      console.error("Profile creation error:", profileError);
+      // Don't fail the signup if profile creation fails - they can still use the account
+      // The profile will be created when they first access the site
+    }
+  }
+
   return {
     success: true,
     message:

@@ -42,9 +42,9 @@ export default function AuthPage() {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
-      // Redirect authenticated users to home page
+      // Redirect authenticated users to home page with full reload
       if (user) {
-        router.push("/");
+        window.location.href = "/";
       }
     };
     checkUser();

@@ -38,7 +38,7 @@ export async function getPosts(limit = 50, offset = 0) {
     .select(
       `
       *,
-      author:profiles!posts_user_id_fkey (id, username, school),
+      author:profiles!posts_user_id_fkey (id, username, school, user_type, intended_major, interests, hometown),
       comments (count)
     `,
     )
@@ -55,7 +55,7 @@ export async function getPostById(post_id) {
     .select(
       `
       *,
-      author:profiles!posts_user_id_fkey (id, username, school)
+      author:profiles!posts_user_id_fkey (id, username, school, user_type, intended_major, interests, hometown)
     `,
     )
     .eq("id", post_id)
@@ -152,7 +152,7 @@ export async function getCommentsByPost(post_id) {
     .select(
       `
       *,
-      author:profiles!comments_user_id_fkey (id, username, school)
+      author:profiles!comments_user_id_fkey (id, username, school, user_type, intended_major, interests, hometown)
     `,
     )
     .eq("post_id", post_id)
@@ -234,10 +234,10 @@ export async function getPostWithComments(post_id) {
     .select(
       `
       *,
-      author:profiles!posts_user_id_fkey (id, username, school),
+      author:profiles!posts_user_id_fkey (id, username, school, user_type, intended_major, interests, hometown),
       comments (
         *,
-        author:profiles!comments_user_id_fkey (id, username, school)
+        author:profiles!comments_user_id_fkey (id, username, school, user_type, intended_major, interests, hometown)
       )
     `,
     )
@@ -754,8 +754,8 @@ export async function sendMessage(recipientId, content, isAnonymous = false) {
     .select(
       `
       *,
-      sender:profiles!messages_sender_id_fkey(id, username),
-      recipient:profiles!messages_recipient_id_fkey(id, username)
+      sender:profiles!messages_sender_id_fkey(id, username, user_type, intended_major, interests, hometown),
+      recipient:profiles!messages_recipient_id_fkey(id, username, user_type, intended_major, interests, hometown)
     `,
     )
     .single();
@@ -779,8 +779,8 @@ export async function getConversation(otherUserId) {
     .select(
       `
       *,
-      sender:profiles!messages_sender_id_fkey(id, username),
-      recipient:profiles!messages_recipient_id_fkey(id, username)
+      sender:profiles!messages_sender_id_fkey(id, username, user_type, intended_major, interests, hometown),
+      recipient:profiles!messages_recipient_id_fkey(id, username, user_type, intended_major, interests, hometown)
     `,
     )
     .or(
@@ -808,8 +808,8 @@ export async function getConversations() {
     .select(
       `
       *,
-      sender:profiles!messages_sender_id_fkey(id, username),
-      recipient:profiles!messages_recipient_id_fkey(id, username)
+      sender:profiles!messages_sender_id_fkey(id, username, user_type, intended_major, interests, hometown),
+      recipient:profiles!messages_recipient_id_fkey(id, username, user_type, intended_major, interests, hometown)
     `,
     )
     .or(`sender_id.eq.${user_id},recipient_id.eq.${user_id}`)

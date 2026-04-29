@@ -19,17 +19,22 @@ export default function SearchPage() {
 
   const [searchType, setSearchType] = useState("posts"); // 'posts' or 'students'
   const [schoolFilter, setSchoolFilter] = useState("");
+  const [majorFilter, setMajorFilter] = useState("");
   const [posts, setPosts] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
 
-  // Filter profiles by school
-  const filteredProfiles = schoolFilter
-    ? profiles.filter((profile) =>
-        profile.school?.toLowerCase().includes(schoolFilter.toLowerCase()),
-      )
-    : profiles;
+  // Filter profiles by school and major
+  const filteredProfiles = profiles.filter((profile) => {
+    const matchesSchool = schoolFilter
+      ? profile.school?.toLowerCase().includes(schoolFilter.toLowerCase())
+      : true;
+    const matchesMajor = majorFilter
+      ? profile.major?.toLowerCase().includes(majorFilter.toLowerCase())
+      : true;
+    return matchesSchool && matchesMajor;
+  });
 
   const performSearch = async (searchTerm) => {
     if (!searchTerm.trim()) return;
@@ -79,9 +84,7 @@ export default function SearchPage() {
     <div className="min-h-screen bg-gray-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-2">Search Results</h1>
-        <p className="text-gray-400 mb-8">
-          Showing results for &ldquo;{query}&rdquo;
-        </p>
+        <p className="text-gray-400 mb-8">Showing results for "{query}"</p>
 
         {alert && (
           <Alert
@@ -111,13 +114,14 @@ export default function SearchPage() {
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
           >
-            Students ({profiles.length})
+            College Students ({profiles.length})
           </button>
         </div>
 
-        {/* School Filter for Students */}
+        {/* Filters for Students */}
         {searchType === "students" && profiles.length > 0 && (
-          <Card className="mb-6">
+          <Card className="mb-6 space-y-4">
+            {/* School Filter */}
             <div className="flex items-center gap-4">
               <label className="text-gray-300 font-medium whitespace-nowrap">
                 Filter by School:
@@ -138,8 +142,32 @@ export default function SearchPage() {
                 </Button>
               )}
             </div>
-            {schoolFilter && (
-              <p className="text-sm text-gray-400 mt-2">
+
+            {/* Major Filter */}
+            <div className="flex items-center gap-4">
+              <label className="text-gray-300 font-medium whitespace-nowrap">
+                Filter by Major:
+              </label>
+              <Input
+                value={majorFilter}
+                onChange={(e) => setMajorFilter(e.target.value)}
+                placeholder="Enter major..."
+                className="flex-1"
+              />
+              {majorFilter && (
+                <Button
+                  onClick={() => setMajorFilter("")}
+                  variant="secondary"
+                  size="sm"
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
+
+            {/* Results count */}
+            {(schoolFilter || majorFilter) && (
+              <p className="text-sm text-gray-400">
                 Showing {filteredProfiles.length} of {profiles.length} students
               </p>
             )}
@@ -159,7 +187,7 @@ export default function SearchPage() {
                 {posts.length === 0 ? (
                   <Card>
                     <p className="text-center text-gray-400 py-8">
-                      No posts found matching &ldquo;{query}&rdquo;
+                      No posts found matching "{query}"
                     </p>
                   </Card>
                 ) : (
@@ -179,8 +207,8 @@ export default function SearchPage() {
                   <Card>
                     <p className="text-center text-gray-400 py-8">
                       {schoolFilter
-                        ? `No students found at &ldquo;${schoolFilter}&rdquo;`
-                        : `No students found matching &ldquo;${query}&rdquo;`}
+                        ? `No students found at "${schoolFilter}"`
+                        : `No students found matching "${query}"`}
                     </p>
                   </Card>
                 ) : (

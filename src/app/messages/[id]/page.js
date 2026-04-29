@@ -116,11 +116,22 @@ export default function ConversationPage() {
           </Button>
           {otherUser && (
             <div className="flex-1">
-              <Link href={`/profile/${otherUser.id}`}>
-                <h1 className="text-2xl font-bold text-white hover:text-cyan-400 transition-colors">
-                  @{otherUser.username}
-                </h1>
-              </Link>
+              <h1 className="text-2xl font-bold text-white">
+                {otherUser.user_type === "high_school"
+                  ? (() => {
+                      const parts = [];
+                      if (otherUser.intended_major) {
+                        parts.push(`Interested in ${otherUser.intended_major}`);
+                      }
+                      if (otherUser.interests) {
+                        parts.push(otherUser.interests);
+                      }
+                      return parts.length > 0
+                        ? parts.join(" • ")
+                        : "High School Student";
+                    })()
+                  : `@${otherUser.username}`}
+              </h1>
               {otherUser.school && (
                 <p className="text-sm text-gray-400">{otherUser.school}</p>
               )}

@@ -30,7 +30,22 @@ export default function CommentCard({
 
       <p className="text-sm text-[var(--text-tertiary)]">
         By{" "}
-        {comment.author?.id ? (
+        {comment.author?.user_type === "high_school" ? (
+          <span className="text-[var(--text-secondary)]">
+            {(() => {
+              const parts = [];
+              if (comment.author?.intended_major) {
+                parts.push(`Interested in ${comment.author.intended_major}`);
+              }
+              if (comment.author?.interests) {
+                parts.push(comment.author.interests);
+              }
+              return parts.length > 0
+                ? parts.join(" • ")
+                : "High School Student";
+            })()}
+          </span>
+        ) : comment.author?.id ? (
           <Link
             href={`/profile/${comment.author.id}`}
             className="text-[var(--brand-blue)] hover:text-[var(--brand-blue-strong)]"

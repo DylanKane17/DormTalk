@@ -133,7 +133,7 @@ export default function PostsPage() {
           </p>
         ) : posts.length === 0 ? (
           <p className="text-center text-[var(--text-tertiary)]">
-            No posts yet. Create the first one!
+            No posts yet!
           </p>
         ) : (
           <div className="space-y-4">

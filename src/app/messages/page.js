@@ -79,10 +79,6 @@ export default function MessagesPage() {
               <p className="text-gray-600 text-lg mb-2 font-medium">
                 No messages yet
               </p>
-              <p className="text-gray-500 text-sm">
-                Start a conversation by visiting someone&apos;s profile and
-                clicking &quot;Message&quot;
-              </p>
             </div>
           </Card>
         ) : (
@@ -105,7 +101,22 @@ export default function MessagesPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-base font-semibold text-gray-900 dark:text-white">
-                          @{conversation.partner.username}
+                          {conversation.partner.user_type === "high_school"
+                            ? (() => {
+                                const parts = [];
+                                if (conversation.partner.intended_major) {
+                                  parts.push(
+                                    `Interested in ${conversation.partner.intended_major}`,
+                                  );
+                                }
+                                if (conversation.partner.interests) {
+                                  parts.push(conversation.partner.interests);
+                                }
+                                return parts.length > 0
+                                  ? parts.join(" • ")
+                                  : "High School Student";
+                              })()
+                            : `@${conversation.partner.username}`}
                         </h3>
                         {conversation.unreadCount > 0 && (
                           <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">

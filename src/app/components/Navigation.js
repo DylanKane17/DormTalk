@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
-import { getCurrentUserProfileAction } from "../actions/profileActions";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { createClient } from "../utils/supabase/client";
 import { useTheme } from "../context/ThemeContext";
 import { checkIsAdminAction } from "../actions/adminActions";
@@ -11,7 +10,7 @@ import { checkIsAdminAction } from "../actions/adminActions";
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const { theme, toggleTheme } = useTheme();
   const [profile, setProfile] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -23,38 +22,93 @@ export default function Navigation() {
 
   useEffect(() => {
     const loadProfile = async () => {
-      const result = await getCurrentUserProfileAction();
-      if (result.success && result.data) {
-        setProfile(result.data);
-        setIsAuthenticated(true);
+      try {
+        // Get the current session using client-side Supabase
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
-        // Check if user is admin
-        const adminCheck = await checkIsAdminAction();
-        setIsAdmin(adminCheck.isAdmin);
-      } else {
+        console.log("[Navigation] Session check:", {
+          hasSession: !!session,
+          userId: session?.user?.id,
+          error: sessionError,
+        });
+
+        if (sessionError || !session) {
+          console.log(
+            "[Navigation] No session found, showing logged out state",
+          );
+          setIsAuthenticated(false);
+          setProfile(null);
+          setIsAdmin(false);
+          setLoading(false);
+          return;
+        }
+
+        // Fetch profile data directly from client
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+
+        console.log("[Navigation] Profile fetch:", {
+          hasProfile: !!profileData,
+          username: profileData?.username,
+          error: profileError,
+        });
+
+        if (profileError || !profileData) {
+          console.log("[Navigation] Profile fetch failed");
+          setIsAuthenticated(false);
+          setProfile(null);
+          setIsAdmin(false);
+        } else {
+          console.log(
+            "[Navigation] Successfully loaded profile, showing logged in state",
+          );
+          setProfile(profileData);
+          setIsAuthenticated(true);
+
+          // Check if user is admin
+          const adminCheck = await checkIsAdminAction();
+          setIsAdmin(adminCheck.isAdmin);
+        }
+      } catch (error) {
+        console.error("[Navigation] Error loading profile:", error);
         setIsAuthenticated(false);
+        setProfile(null);
+        setIsAdmin(false);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
+
     loadProfile();
 
     // Listen for auth state changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("[Navigation] Auth state changed:", event, {
+        hasSession: !!session,
+      });
       if (session) {
         // User logged in, reload profile
+        setLoading(true);
         loadProfile();
       } else {
         // User logged out
         setProfile(null);
         setIsAuthenticated(false);
         setIsAdmin(false);
+        setLoading(false);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [supabase]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -282,26 +336,29 @@ export default function Navigation() {
                         My Profile
                       </Link>
 
-                      <Link
-                        href="/my-posts"
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                      {/* Only show My Posts for high school students */}
+                      {profile.user_type === "high_school" && (
+                        <Link
+                          href="/my-posts"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
+                          onClick={() => setShowDropdown(false)}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                        My Posts
-                      </Link>
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          My Posts
+                        </Link>
+                      )}
 
                       <Link
                         href="/my-comments"

@@ -42,9 +42,9 @@ export function checkForBadWords(text) {
 
   // Check for each bad word
   for (const badWord of badWords) {
-    // Use word boundary regex to match whole words and parts of words
-    // This catches variations like "badword", "bad-word", "bad_word", etc.
-    const regex = new RegExp(`\\b${badWord}\\b|${badWord}`, "i");
+    // Use word boundary regex to match ONLY whole words
+    // This prevents false positives like "hell" matching in "hello"
+    const regex = new RegExp(`\\b${badWord}\\b`, "i");
     if (regex.test(lowerText)) {
       foundWords.push(badWord);
     }

@@ -52,6 +52,21 @@ export default function PostCard({
                     return info || "High School Student";
                   })()}
                 </span>
+              ) : post.author?.user_type === "high_school" ? (
+                <span className="text-sm font-medium text-[var(--text-secondary)]">
+                  {(() => {
+                    const parts = [];
+                    if (post.author?.intended_major) {
+                      parts.push(`Interested in ${post.author.intended_major}`);
+                    }
+                    if (post.author?.interests) {
+                      parts.push(post.author.interests);
+                    }
+                    return parts.length > 0
+                      ? parts.join(" • ")
+                      : "High School Student";
+                  })()}
+                </span>
               ) : post.author?.id ? (
                 <Link
                   href={`/profile/${post.author.id}`}
