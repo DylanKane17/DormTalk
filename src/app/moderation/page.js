@@ -9,7 +9,10 @@ import Modal from "../components/Modal";
 import Alert from "../components/Alert";
 import {
   getFlaggedPostsAction,
+  getFlaggedCommentsAction,
   unflagPostAction,
+  unflagCommentAction,
+  adminDeleteCommentAction,
   hidePostAction,
   unhidePostAction,
 } from "../actions/moderationActions";
@@ -18,6 +21,7 @@ import { checkIsAdmin } from "../utils/adminCheck";
 
 export default function ModerationPage() {
   const [flaggedPosts, setFlaggedPosts] = useState([]);
+  const [flaggedComments, setFlaggedComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState(null);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -34,8 +38,19 @@ export default function ModerationPage() {
     setLoading(false);
   };
 
+  const loadFlaggedComments = async () => {
+    const result = await getFlaggedCommentsAction(50);
+    if (result.success) {
+      setFlaggedComments(result.data || []);
+    } else {
+      setAlert({ type: "error", message: result.message });
+    }
+  };
+
   useEffect(() => {
     loadFlaggedPosts();
+    loadFlaggedComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleUnflag = async (postId) => {
@@ -83,6 +98,29 @@ export default function ModerationPage() {
     }
   };
 
+  const handleUnflagComment = async (commentId) => {
+    const result = await unflagCommentAction(commentId);
+    if (result.success) {
+      setAlert({ type: "success", message: result.message });
+      loadFlaggedComments();
+    } else {
+      setAlert({ type: "error", message: result.message });
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!confirm("Are you sure you want to permanently delete this comment?"))
+      return;
+
+    const result = await adminDeleteCommentAction(commentId);
+    if (result.success) {
+      setAlert({ type: "success", message: result.message });
+      loadFlaggedComments();
+    } else {
+      setAlert({ type: "error", message: result.message });
+    }
+  };
+
   const openPostDetails = (post) => {
     setSelectedPost(post);
     setIsModalOpen(true);
@@ -93,10 +131,16 @@ export default function ModerationPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">
-            Post Moderation Dashboard
+            Moderation Dashboard
           </h1>
-          <Button onClick={loadFlaggedPosts} variant="secondary">
-            Refresh
+          <Button
+            onClick={() => {
+              loadFlaggedPosts();
+              loadFlaggedComments();
+            }}
+            variant="secondary"
+          >
+            Refresh All
           </Button>
         </div>
 
@@ -214,6 +258,77 @@ export default function ModerationPage() {
             ))}
           </div>
         )}
+
+        {/* FLAGGED COMMENTS SECTION */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-white mb-6">
+            Flagged Comments
+          </h2>
+          {flaggedComments.length === 0 ? (
+            <Card>
+              <p className="text-center text-gray-400">
+                No flagged comments at this time.
+              </p>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              <div className="bg-yellow-900/20 border border-yellow-600 rounded-lg p-4 mb-4">
+                <p className="text-yellow-400 font-medium">
+                  ⚠️ {flaggedComments.length} flagged comment
+                  {flaggedComments.length !== 1 ? "s" : ""} requiring review
+                </p>
+              </div>
+
+              {flaggedComments.map((comment) => (
+                <Card key={comment.id} className="border-l-4 border-orange-500">
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-gray-300 mb-2">{comment.content}</p>
+                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <span>By {comment.author?.username || "Unknown"}</span>
+                        <span>•</span>
+                        <span>
+                          On post: {comment.post?.title || "Unknown Post"}
+                        </span>
+                        <span>•</span>
+                        <span>
+                          {new Date(comment.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="bg-red-900/20 border border-red-600 rounded p-3">
+                      <p className="text-red-400 text-sm">
+                        <strong>Flag Reason:</strong> {comment.flag_reason}
+                      </p>
+                      <p className="text-red-400 text-sm mt-1">
+                        <strong>Flagged at:</strong>{" "}
+                        {new Date(comment.flagged_at).toLocaleString()}
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2 flex-wrap">
+                      <Button
+                        onClick={() => handleUnflagComment(comment.id)}
+                        variant="success"
+                        size="sm"
+                      >
+                        Unflag (Approve)
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        variant="danger"
+                        size="sm"
+                      >
+                        Delete Comment
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
 
         <Modal
           isOpen={isModalOpen}

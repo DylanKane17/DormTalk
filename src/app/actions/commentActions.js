@@ -8,6 +8,8 @@ import {
   updateComment,
   deleteComment,
   getCommentCount,
+  flagComment,
+  unflagComment,
 } from "../utils/supabase/crud";
 import { revalidatePath } from "next/cache";
 import { validateContent } from "../utils/moderation";
@@ -102,4 +104,27 @@ export async function getCommentCountAction(postId) {
   }
 
   return { success: true, count };
+}
+
+export async function flagCommentAction(commentId, reason = "inappropriate") {
+  const { data, error } = await flagComment(commentId, reason);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  revalidatePath("/posts");
+  revalidatePath("/moderation");
+  return { success: true, data, message: "Comment flagged for review." };
+}
+
+export async function unflagCommentAction(commentId) {
+  const { data, error } = await unflagComment(commentId);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  revalidatePath("/moderation");
+  return { success: true, data, message: "Comment unflagged." };
 }

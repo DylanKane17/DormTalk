@@ -301,10 +301,6 @@ export default function SearchPage() {
                               </p>
                             )}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            Joined{" "}
-                            {new Date(profile.created_at).toLocaleDateString()}
-                          </div>
                         </div>
                       </Card>
                     ))}

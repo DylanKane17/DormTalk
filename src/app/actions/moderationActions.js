@@ -4,6 +4,7 @@ import {
   flagPost,
   unflagPost,
   getFlaggedPosts,
+  getFlaggedComments,
   hidePost,
   unhidePost,
   getVisiblePosts,
@@ -109,4 +110,60 @@ export async function getVisiblePostsAction(limit = 50, offset = 0) {
   }
 
   return { success: true, data };
+}
+
+export async function getFlaggedCommentsAction(limit = 50) {
+  // Require admin access
+  try {
+    await requireAdmin();
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+
+  const { data, error } = await getFlaggedComments(limit);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  return { success: true, data };
+}
+
+export async function unflagCommentAction(commentId) {
+  // Require admin access
+  try {
+    await requireAdmin();
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+
+  const { unflagComment } = await import("../utils/supabase/crud");
+  const { data, error } = await unflagComment(commentId);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  revalidatePath("/moderation");
+  return { success: true, data, message: "Comment unflagged successfully!" };
+}
+
+export async function adminDeleteCommentAction(commentId) {
+  // Require admin access
+  try {
+    await requireAdmin();
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+
+  const { deleteComment } = await import("../utils/supabase/crud");
+  const { data, error } = await deleteComment(commentId);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  revalidatePath("/moderation");
+  revalidatePath("/posts");
+  return { success: true, data, message: "Comment deleted successfully!" };
 }

@@ -396,6 +396,68 @@ export async function getFlaggedPosts(limit = 50) {
   return { data, error };
 }
 
+export async function flagComment(comment_id, reason = "inappropriate") {
+  const supabase = await createClient();
+  const user_id = await getUserID(supabase);
+
+  if (!user_id) {
+    return {
+      data: null,
+      error: { message: "You must be logged in to flag a comment." },
+    };
+  }
+
+  // Update comment with flagged status and reason
+  const { data, error } = await supabase
+    .from("comments")
+    .update({
+      is_flagged: true,
+      flag_reason: reason,
+      flagged_at: new Date().toISOString(),
+      flagged_by: user_id,
+    })
+    .eq("id", comment_id)
+    .select();
+
+  return { data, error };
+}
+
+export async function unflagComment(comment_id) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("comments")
+    .update({
+      is_flagged: false,
+      flag_reason: null,
+      flagged_at: null,
+      flagged_by: null,
+    })
+    .eq("id", comment_id)
+    .select();
+
+  return { data, error };
+}
+
+export async function getFlaggedComments(limit = 50) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("comments")
+    .select(
+      `
+      *,
+      author:profiles!comments_user_id_fkey (id, username, school),
+      post:post_id (id, title)
+    `,
+    )
+    .eq("is_flagged", true)
+    .order("flagged_at", { ascending: false })
+    .limit(limit);
+
+  return { data, error };
+}
+
 export async function hidePost(post_id) {
   const supabase = await createClient();
 

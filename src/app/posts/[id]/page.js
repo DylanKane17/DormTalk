@@ -10,7 +10,10 @@ import Alert from "../../components/Alert";
 import VoteButtons from "../../components/VoteButtons";
 import CommentVoteButtons from "../../components/CommentVoteButtons";
 import { getPostWithCommentsAction } from "../../actions/postActions";
-import { createCommentAction } from "../../actions/commentActions";
+import {
+  createCommentAction,
+  flagCommentAction,
+} from "../../actions/commentActions";
 
 export default function PostDetailPage() {
   const params = useParams();
@@ -53,6 +56,21 @@ export default function PostDetailPage() {
       setAlert({ type: "success", message: "Comment posted!" });
       setCommentContent("");
       loadPost(); // Refresh the comments list
+    } else {
+      setAlert({ type: "error", message: result.message });
+    }
+  };
+
+  const handleFlagComment = async (commentId) => {
+    const reason = prompt(
+      "Please provide a reason for flagging this comment:",
+      "inappropriate",
+    );
+    if (!reason) return;
+
+    const result = await flagCommentAction(commentId, reason);
+    if (result.success) {
+      setAlert({ type: "success", message: result.message });
     } else {
       setAlert({ type: "error", message: result.message });
     }
@@ -123,10 +141,6 @@ export default function PostDetailPage() {
                 @anonymous
               </span>
             )}
-            <span>•</span>
-            <span className="bg-[var(--surface-elevated)] px-2 py-0.5 rounded text-xs">
-              {post.author?.school || "Unknown School"}
-            </span>
             <span>•</span>
             <span>{new Date(post.created_at).toLocaleDateString()}</span>
           </div>
@@ -214,12 +228,19 @@ export default function PostDetailPage() {
                     {comment.content}
                   </p>
 
-                  {/* Voting buttons for comments */}
-                  <div className="pt-2 border-t border-[var(--border)]">
+                  {/* Voting and Flag buttons for comments */}
+                  <div className="pt-2 border-t border-[var(--border)] flex items-center justify-between">
                     <CommentVoteButtons
                       commentId={comment.id}
                       initialScore={0}
                     />
+                    <button
+                      onClick={() => handleFlagComment(comment.id)}
+                      className="text-xs text-[var(--text-tertiary)] hover:text-[var(--error)] transition-colors flex items-center gap-1"
+                      title="Flag comment"
+                    >
+                      🚩 Flag
+                    </button>
                   </div>
                 </Card>
               ))}
