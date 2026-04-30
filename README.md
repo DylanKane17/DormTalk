@@ -383,12 +383,6 @@ npm run lint         # Run ESLint
 
 This project is private and proprietary. All rights reserved.
 
-## 👨‍💻 Author
-
-**Dylan Kane**
-
-- GitHub: [@DylanKane17](https://github.com/DylanKane17)
-
 ## 🙏 Acknowledgments
 
 - [Next.js](https://nextjs.org/) - React framework
